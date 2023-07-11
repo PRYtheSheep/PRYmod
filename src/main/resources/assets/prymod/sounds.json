@@ -1,0 +1,14 @@
+{
+  "explosion_on_cast" : {
+    "subtitle" : "sounds.prymod.explosion_on_cast",
+    "sounds" : [
+      "prymod:explosion_on_cast"
+    ]
+  },
+  "csgo_deathmoan_3" : {
+    "subtitle" : "sounds.prymod.csgo_deathmoan_3",
+    "sounds" : [
+      "prymod:csgo_deathmoan_3"
+    ]
+  }
+}

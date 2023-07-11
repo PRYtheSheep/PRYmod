@@ -1,0 +1,9 @@
+{
+  "replace" : false,
+  "values": [
+    "prymod:black_opal_ore",
+    "prymod:deepslate_black_opal_ore",
+    "prymod:netherrack_black_opal_ore",
+    "prymod:endstone_black_opal_ore"
+  ]
+}

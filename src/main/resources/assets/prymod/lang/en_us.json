@@ -1,0 +1,22 @@
+{
+  "item.prymod.black_opal" : "Black Opal",
+  "item.prymod.raw_black_opal" : "Raw Black Opal",
+  "item.prymod.test_wand" : "Villager Staff",
+
+  "block.prymod.black_opal_block" : "Black Opal Block",
+  "block.prymod.black_opal_ore" : "Black Opal Ore",
+  "block.prymod.deepslate_black_opal_ore" : "Deepslate Black Opal Ore",
+  "block.prymod.netherrack_black_opal_ore" : "Netherrack Black Opal Ore",
+  "block.prymod.endstone_black_opal_ore" : "Endstone Black Opal Ore",
+
+  "block.prymod.ebony_log" : "Ebony Log",
+  "block.prymod.ebony_wood" : "Ebony Wood",
+  "block.prymod.stripped_ebony_log" : "Stripped Ebony Log",
+  "block.prymod.stripped_ebony_wood" : "Stripped Ebony Wood",
+  "block.prymod.ebony_planks" : "Ebony Planks",
+  "block.prymod.ebony_sapling" : "Ebony Sapling",
+  "block.prymod.ebony_leaves" : "Ebony Leaves",
+  "block.prymod.cable" : "Cable",
+
+  "creativemodetab.prymod_tab" : "PRY mod"
+}

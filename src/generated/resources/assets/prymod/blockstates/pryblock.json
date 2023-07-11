@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north" : {"model" :  "prymod:block/pryblock"},
+    "facing=east" : {"model" :  "prymod:block/pryblock", "y" :  90},
+    "facing=south" : {"model" :  "prymod:block/pryblock", "y" :  180},
+    "facing=west" : {"model" :  "prymod:block/pryblock", "y" :  270}
+  }
+}

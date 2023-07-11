@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north" : {"model" :  "prymod:block/pryradar"},
+    "facing=east" : {"model" :  "prymod:block/pryradar", "y" :  90},
+    "facing=south" : {"model" :  "prymod:block/pryradar", "y" :  180},
+    "facing=west" : {"model" :  "prymod:block/pryradar", "y" :  270}
+  }
+}

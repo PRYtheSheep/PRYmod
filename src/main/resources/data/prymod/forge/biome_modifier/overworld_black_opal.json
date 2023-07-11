@@ -1,0 +1,6 @@
+{
+  "type" : "forge:add_features",
+  "biomes" : "#is_overworld",
+  "features" : "prymod:black_opal_placed",
+  "step" : "underground_ores"
+}

@@ -1,0 +1,9 @@
+{
+  "replace" : false,
+  "values": [
+    "prymod:ebony_log",
+    "prymod:ebony_wood",
+    "prymod:stripped_ebony_log",
+    "prymod:stripped_ebony_wood"
+  ]
+}

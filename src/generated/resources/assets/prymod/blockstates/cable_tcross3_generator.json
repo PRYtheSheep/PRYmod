@@ -1,0 +1,19 @@
+{
+  "variants" : {
+    "facing=north" : {
+      "model" : "prymod:block/cable_tcross3_generator"
+    },
+    "facing=east" : {
+      "model" : "prymod:block/cable_tcross3_generator",
+      "y" : 90
+    },
+    "facing=south" : {
+      "model" : "prymod:block/cable_tcross3_generator",
+      "y" : 180
+    },
+    "facing=west" : {
+      "model" : "prymod:block/cable_tcross3_generator",
+      "y" : 270
+    }
+  }
+}

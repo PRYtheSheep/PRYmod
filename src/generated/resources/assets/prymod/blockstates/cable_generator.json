@@ -1,0 +1,126 @@
+{
+  "variants" : {
+    "eastconnected=false,facing=north,northconnected=false,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_generator",
+      "y" : 0
+    },
+    "eastconnected=false,facing=east,northconnected=false,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_generator",
+      "y" : 90
+    },
+    "eastconnected=false,facing=south,northconnected=false,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_generator",
+      "y" : 180
+    },
+    "eastconnected=false,facing=west,northconnected=false,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_generator",
+      "y" : 270
+    },
+
+    "eastconnected=true,facing=north,northconnected=false,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_lcurve1_generator",
+      "y" : 0
+    },
+    "eastconnected=true,facing=south,northconnected=false,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_lcurve2_generator",
+      "y" : 180
+    },
+    "eastconnected=true,facing=west,northconnected=false,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_generator",
+      "y" : 270
+    },
+
+    "eastconnected=false,facing=north,northconnected=false,southconnected=true,westconnected=false" : {
+      "model" : "prymod:block/cable_generator",
+      "y" : 0
+    },
+    "eastconnected=false,facing=east,northconnected=false,southconnected=true,westconnected=false" : {
+      "model" : "prymod:block/cable_lcurve1_generator",
+      "y" : 90
+    },
+    "eastconnected=false,facing=west,northconnected=false,southconnected=true,westconnected=false" : {
+      "model" : "prymod:block/cable_lcurve2_generator",
+      "y" : 270
+    },
+
+    "eastconnected=false,facing=north,northconnected=false,southconnected=false,westconnected=true" : {
+      "model" : "prymod:block/cable_lcurve2_generator",
+      "y" : 0
+    },
+    "eastconnected=false,facing=east,northconnected=false,southconnected=false,westconnected=true" : {
+      "model" : "prymod:block/cable_generator",
+      "y" : 90
+    },
+    "eastconnected=false,facing=south,northconnected=false,southconnected=false,westconnected=true" : {
+      "model" : "prymod:block/cable_lcurve1_generator",
+      "y" : 180
+    },
+
+    "eastconnected=false,facing=east,northconnected=true,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_lcurve2_generator",
+      "y" : 90
+    },
+    "eastconnected=false,facing=south,northconnected=true,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_generator",
+      "y" : 180
+    },
+    "eastconnected=false,facing=west,northconnected=true,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_lcurve1_generator",
+      "y" : 270
+    },
+
+    "eastconnected=true,facing=north,northconnected=false,southconnected=false,westconnected=true" : {
+      "model" : "prymod:block/cable_tcross3_generator",
+      "y" : 0
+    },
+    "eastconnected=true,facing=south,northconnected=false,southconnected=false,westconnected=true" : {
+      "model" : "prymod:block/cable_tcross3_generator",
+      "y" : 180
+    },
+
+    "eastconnected=false,facing=east,northconnected=true,southconnected=true,westconnected=false" : {
+      "model" : "prymod:block/cable_tcross3_generator",
+      "y" : 90
+    },
+    "eastconnected=false,facing=west,northconnected=true,southconnected=true,westconnected=false" : {
+      "model" : "prymod:block/cable_tcross3_generator",
+      "y" : 270
+    },
+
+    "eastconnected=true,facing=south,northconnected=true,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_tcross2_generator",
+      "y" : 180
+    },
+    "eastconnected=true,facing=west,northconnected=true,southconnected=false,westconnected=false" : {
+      "model" : "prymod:block/cable_tcross1_generator",
+      "y" : 270
+    },
+
+    "eastconnected=true,facing=north,northconnected=false,southconnected=true,westconnected=false" : {
+      "model" : "prymod:block/cable_tcross1_generator",
+      "y" : 0
+    },
+    "eastconnected=true,facing=west,northconnected=false,southconnected=true,westconnected=false" : {
+      "model" : "prymod:block/cable_tcross2_generator",
+      "y" : 270
+    },
+
+    "eastconnected=false,facing=north,northconnected=false,southconnected=true,westconnected=true" : {
+      "model" : "prymod:block/cable_tcross2_generator",
+      "y" : 0
+    },
+    "eastconnected=false,facing=east,northconnected=false,southconnected=true,westconnected=true" : {
+      "model" : "prymod:block/cable_tcross1_generator",
+      "y" : 90
+    },
+
+    "eastconnected=false,facing=east,northconnected=true,southconnected=false,westconnected=true" : {
+      "model" : "prymod:block/cable_tcross2_generator",
+      "y" : 90
+    },
+    "eastconnected=false,facing=south,northconnected=true,southconnected=false,westconnected=true" : {
+      "model" : "prymod:block/cable_tcross1_generator",
+      "y" : 180
+    }
+  }
+}
