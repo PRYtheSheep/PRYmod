@@ -48,6 +48,10 @@ public class PRYRadarEntity extends BlockEntity {
             }
         }
 
+        if(radarTarget != null && !livingEntityLinkedList.contains(radarTarget)){
+            livingEntityLinkedList.add(radarTarget);
+        }
+
         AABB startEndBox = null;
         switch(this.getBlockState().getValue(PRYRadar.FACING)){
             case NORTH -> {

@@ -64,9 +64,12 @@ public class PRYBlockEntity extends BlockEntity {
             ModMessages.INSTANCE.send(PacketDistributor.ALL.noArg(), new PRYBlockEntityS2C(target.getUUID(), this.getBlockPos()));
 
             if(progressCount == -1) progressCount = progress;
-            if(progress - progressCount < 99){
-                if(progress % 2 == 0 && TestRenderer.colour.equals("green") || TestRenderer.colour.equals("yellow")) TestRenderer.colour = "red";
-                else if(progress % 2 == 0 && TestRenderer.colour.equals("red")) TestRenderer.colour = "green";
+            if(progress - progressCount > 250){
+                //if(progress % 2 == 0 && TestRenderer.colour.equals("green") || TestRenderer.colour.equals("yellow")) TestRenderer.colour = "red";
+                //else if(progress % 2 == 0 && TestRenderer.colour.equals("red")) TestRenderer.colour = "green";
+                this.inflight = false;
+                progressCount = -1;
+                return;
             }
             else if (progress % 50 == 0 && pointingAtTarget){
                 TestRenderer.colour = "green";

@@ -193,6 +193,7 @@ public class EventHandlingTest {
     @SubscribeEvent
     public void hurtEvent(LivingHurtEvent event){
         if(event.getSource().getEntity() instanceof ProximityArrowEntity){
+
         }
     }
 
@@ -204,8 +205,10 @@ public class EventHandlingTest {
     @SubscribeEvent
     public void breakingBlock(BlockEvent.BreakEvent event){
         Block brokenBlock = event.getState().getBlock();
-        if(brokenBlock instanceof PRYRadar){
+        if(brokenBlock instanceof PRYRadar radar){
             //PRYRadarEntity.radarTarget = null;
+            PRYRadarEntity.livingEntityLinkedList.clear();
+            TestRenderer.previousPos.clear();
         }
         else if(brokenBlock instanceof PRYBlock){
             TestRenderer.colour = "yellow";

@@ -19,6 +19,7 @@ import net.minecraft.world.phys.*;
 import net.minecraftforge.network.NetworkHooks;
 import net.mod.prymod.ModBlock.PRYBlockEntity;
 
+@SuppressWarnings("LanguageDetectionInspection")
 public class ProximityArrowEntity extends AbstractArrow {
 
     @Override
