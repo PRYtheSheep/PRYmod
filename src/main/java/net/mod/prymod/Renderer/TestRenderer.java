@@ -36,8 +36,11 @@ import software.bernie.shadowed.eliotlash.mclib.math.functions.limit.Min;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+
+import static net.mod.prymod.ModBlock.PRYRadarEntity.livingEntityRGBHashMap;
 
 @Mod.EventBusSubscriber(modid = PRYmod.MODID, value = Dist.CLIENT)
 public class TestRenderer {
@@ -45,15 +48,14 @@ public class TestRenderer {
     static double previousX;
     static double previousY;
     static double previousZ;
-    static ArrayList<Entity> toRenderList = new ArrayList<>();
     public static ArrayList<Vector3f> previousPos = new ArrayList<>();
-    public static String colour;
 
     @SubscribeEvent
     public static void onWorldRenderLast(RenderLevelStageEvent event){
 
         if(event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return;
-        if(PRYRadarEntity.livingEntityLinkedList.isEmpty()) return;
+        //if(PRYRadarEntity.livingEntityLinkedList.isEmpty()) return;
+        if(livingEntityRGBHashMap.isEmpty()) return;
 
         if(Minecraft.getInstance().player == null) return;
         Player player = Minecraft.getInstance().player;
@@ -120,7 +122,8 @@ public class TestRenderer {
         RenderSystem.enableDepthTest();*/
         int i = 0;
         int j = 0;
-        for(LivingEntity livingEntity : PRYRadarEntity.livingEntityLinkedList){
+        //for(LivingEntity livingEntity : PRYRadarEntity.livingEntityLinkedList){
+        for(Map.Entry<LivingEntity, RGB> set : livingEntityRGBHashMap.entrySet()){
             AABB startEndBox = new AABB(
                     Minecraft.getInstance().player.getX()-90,
                     Minecraft.getInstance().player.getY()-200,
@@ -130,8 +133,9 @@ public class TestRenderer {
                     Minecraft.getInstance().player.getZ()+90);
             List<Entity> list1 = Minecraft.getInstance().level.getEntities(null, startEndBox);
             Entity target = null;
+            if(set.getKey() == null) return;
             for(Entity entity : list1){
-                if(entity!=null && entity.getStringUUID().equals(livingEntity.getStringUUID())){
+                if(entity!=null && entity.getStringUUID().equals(set.getKey().getStringUUID())){
                     target = entity;
                     try{
                         previousPos.get(j++);
@@ -168,33 +172,13 @@ public class TestRenderer {
 
             stack.pushPose();
             stack.translate(px - s0, py - s1, pz - s2);
-            if(colour.equals("yellow")){
-                LevelRenderer.renderLineBox(stack, vertexConsumer, aabb, 1, 1, 0, 1);
-            }
-            else if(colour.equals("red")){
-                LevelRenderer.renderLineBox(stack, vertexConsumer, aabb, 1, 0, 0, 1);
-            }
-            else{
-                LevelRenderer.renderLineBox(stack, vertexConsumer, aabb, 0, 1, 0, 1);
-            }
+
+            RGB rgbValues = set.getValue();
+            LevelRenderer.renderLineBox(stack, vertexConsumer, aabb, rgbValues.r, rgbValues.g, rgbValues.b, 1);
+
             stack.popPose();
         }
         //event.getPoseStack().popPose();
         RenderSystem.enableDepthTest();
     }
-
-    private static void renderHitbox(PoseStack p_114442_, VertexConsumer p_114443_, Entity p_114444_, float p_114445_) {
-        AABB aabb = p_114444_.getBoundingBox().move(-p_114444_.getX(), -p_114444_.getY(), -p_114444_.getZ());
-        LevelRenderer.renderLineBox(p_114442_, p_114443_, aabb, 0, 1.0F, 0, 1.0F);
-    }
-
-    private static Vec3 getVectorForRotation(float pitch, float yaw)
-    {
-        float f = (float) Math.cos(-yaw * 0.017453292F - (float)Math.PI);
-        float f1 = (float) Math.sin(-yaw * 0.017453292F - (float)Math.PI);
-        float f2 = (float) -Math.cos(-pitch * 0.017453292F);
-        float f3 = (float) Math.sin(-pitch * 0.017453292F);
-        return new Vec3(f1 * f2 * -1, f3, f * f2 * -1);
-    }
-
 }

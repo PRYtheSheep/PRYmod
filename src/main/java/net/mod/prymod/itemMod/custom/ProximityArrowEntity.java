@@ -63,6 +63,12 @@ public class ProximityArrowEntity extends AbstractArrow {
     }
 
     public void setEntityOwner(PRYBlockEntity entityOwner) { this.entityOwner = entityOwner; }
+
+    @Override
+    public boolean isNoGravity() {
+        return true;
+    }
+
     public void setTarget(LivingEntity target) { this.target = target; }
 
     PRYBlockEntity entityOwner = null;
@@ -100,10 +106,12 @@ public class ProximityArrowEntity extends AbstractArrow {
             //this.level.addParticle(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, particlePosDifference.x*1.1, particlePosDifference.y*1.1,particlePosDifference.z*1.1);
         }
 
-        if(progress <= 1 && !this.level.isClientSide() && target != null){
+        if(!this.level.isClientSide() && target != null && progress <= 1){
             this.level.playSound(this, this.blockPosition(), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.NEUTRAL, 10f, 10f);
+
             this.setDeltaMovement(resultantVector);
-            if(this.getDeltaMovement().length() > 0.1){
+
+            if(this.getDeltaMovement().length() > 1){
                 this.setDeltaMovement(this.getDeltaMovement().multiply(
                         1/this.getDeltaMovement().length(),
                         1/this.getDeltaMovement().length(),
@@ -113,7 +121,6 @@ public class ProximityArrowEntity extends AbstractArrow {
             progress++;
             return;
         }
-        progress++;
 
         if(target != null){
 
@@ -122,36 +129,10 @@ public class ProximityArrowEntity extends AbstractArrow {
 
             Double angle = Math.acos(resultantVector.dot(currentVector) / (resultantVector.length() * currentVector.length())) * (180/Math.PI);
 
-
-            double arcRate = 0.85;
-            double multiplier = 1;
-
-            if(angle > 90){
-                multiplier = 0.4;
-            }
-            else if(angle > 120){
-                multiplier = 0.2;
-            }
-
-            arcRate *= multiplier;
-
-            if(resultantVector.length() > 8 && resultantVector.length() < 10){
-                arcRate = 0.87;
-            }
-            else if(resultantVector.length() > 6.5 && resultantVector.length() <8){
-                arcRate = 0.9;
-            }
-            else if(resultantVector.length() > 5 && resultantVector.length() < 6.5){
-                arcRate = 0.93;
-            }
-            else if(resultantVector.length() < 5){
-                arcRate = 1;
-            }
-
-            this.setDeltaMovement(this.getDeltaMovement().add(resultantVector.multiply(1, 1, 1)));
+            this.setDeltaMovement(this.getDeltaMovement().add(resultantVector));
 
 
-            if(this.getDeltaMovement().length() > 0.1){
+            if(this.getDeltaMovement().length() > 1){
                 this.setDeltaMovement(this.getDeltaMovement().multiply(
                         1/this.getDeltaMovement().length(),
                         1/this.getDeltaMovement().length(),
@@ -165,7 +146,7 @@ public class ProximityArrowEntity extends AbstractArrow {
                         this.getX(),
                         this.getY(),
                         this.getZ(),
-                        0.1F,
+                        3F,
                         Level.ExplosionInteraction.NONE);
                 this.kill();
 
@@ -184,6 +165,8 @@ public class ProximityArrowEntity extends AbstractArrow {
                     player.displayClientMessage(Component.literal("§eMissile lost"), true);
                 }
             }
+
+            progress++;
 
 
 

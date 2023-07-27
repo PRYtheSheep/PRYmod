@@ -45,6 +45,7 @@ import net.mod.prymod.ModBlock.PRYBlock;
 import net.mod.prymod.ModBlock.PRYBlockEntity;
 import net.mod.prymod.ModBlock.PRYRadar;
 import net.mod.prymod.ModBlock.PRYRadarEntity;
+import net.mod.prymod.Renderer.RGB;
 import net.mod.prymod.Renderer.TestRenderer;
 import net.mod.prymod.itemMod.custom.ProximityArrowEntity;
 import net.mod.prymod.itemMod.custom.TestWand;
@@ -52,6 +53,7 @@ import net.mod.prymod.itemMod.networking.ModMessages;
 import net.mod.prymod.itemMod.networking.packets.PRYBlockRendererC2SPacket;
 import net.mod.prymod.sound.ModSounds;
 import org.lwjgl.opengl.GL11;
+import software.bernie.shadowed.eliotlash.mclib.math.functions.limit.Min;
 
 
 import java.util.LinkedList;
@@ -199,19 +201,19 @@ public class EventHandlingTest {
 
     @SubscribeEvent
     public void registerAdditional(ModelEvent.RegisterAdditional event){
-        event.register(new ResourceLocation(PRYmod.MODID, "textures/block/pryblock.png"));
+        event.register(new ResourceLocation(PRYmod.MODID, "textures/block/prylauncher.png"));
     }
 
     @SubscribeEvent
     public void breakingBlock(BlockEvent.BreakEvent event){
         Block brokenBlock = event.getState().getBlock();
-        if(brokenBlock instanceof PRYRadar radar){
+        if(brokenBlock instanceof PRYRadar){
             //PRYRadarEntity.radarTarget = null;
-            PRYRadarEntity.livingEntityLinkedList.clear();
+            //PRYRadarEntity.livingEntityLinkedList.clear();
+            PRYRadarEntity.livingEntityRGBHashMap.clear();
             TestRenderer.previousPos.clear();
         }
         else if(brokenBlock instanceof PRYBlock){
-            TestRenderer.colour = "yellow";
         }
     }
 

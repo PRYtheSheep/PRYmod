@@ -66,20 +66,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
 
         Vec3 targetPos = null;
 
-        switch(entity.getBlockState().getValue(PRYBlock.FACING)){
-            case NORTH -> {
-                stack.translate(0, 0, 0.15);
-            }
-            case EAST -> {
-                stack.translate(-0.15, 0, 0);
-            }
-            case SOUTH -> {
-                stack.translate(0, 0, -0.15);
-            }
-            case WEST -> {
-                stack.translate(0.15, 0, 0);
-            }
-        }
+        stack.translate(0, 0, 0);
         if(entity.facing == -1){
             switch(entity.getBlockState().getValue(PRYBlock.FACING)){
                 case NORTH -> {

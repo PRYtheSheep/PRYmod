@@ -30,7 +30,7 @@ public class ClientStartup {
 
         @SubscribeEvent
         public static void registerAdditional(ModelEvent.RegisterAdditional event){
-            event.register(new ResourceLocation(PRYmod.MODID, "textures/block/pryblock.png"));
+            event.register(new ResourceLocation(PRYmod.MODID, "textures/block/prylauncher.png"));
         }
 
         @SubscribeEvent

@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
+import net.mod.prymod.Renderer.RGB;
 import net.mod.prymod.Renderer.TestRenderer;
 import net.mod.prymod.itemMod.custom.ProximityArrowEntity;
 import net.mod.prymod.itemMod.networking.ModMessages;
@@ -50,7 +51,7 @@ public class PRYBlockEntity extends BlockEntity {
             BlockPos radarPos = isConnectedToRadar(this.getBlockPos());
             radarEntity = (PRYRadarEntity) this.level.getBlockEntity(radarPos);
         }
-
+        else return;
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
         if(radarEntity.radarTarget != target) progressCount = -1;
         //Spawn projectile if target is found
@@ -63,26 +64,25 @@ public class PRYBlockEntity extends BlockEntity {
             target = radarEntity.radarTarget;
             ModMessages.INSTANCE.send(PacketDistributor.ALL.noArg(), new PRYBlockEntityS2C(target.getUUID(), this.getBlockPos()));
 
-            if(progressCount == -1) progressCount = progress;
-            if(progress - progressCount > 250){
-                //if(progress % 2 == 0 && TestRenderer.colour.equals("green") || TestRenderer.colour.equals("yellow")) TestRenderer.colour = "red";
-                //else if(progress % 2 == 0 && TestRenderer.colour.equals("red")) TestRenderer.colour = "green";
+            if(progress %2 == 0 && progressCount == -1) progressCount = progress;
+            if(progress != -1 && progress - progressCount <= 100){
+                RGB currentRGB = PRYRadarEntity.livingEntityRGBHashMap.get(target);
+                if(progress %2 == 0 && currentRGB.equals(new RGB(0, 1, 1))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(1, 1, 0));
+                else if(progress %2 == 0 && currentRGB.equals(new RGB(1, 1, 0))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(0, 1, 1));
                 this.inflight = false;
-                progressCount = -1;
+                progress++;
                 return;
             }
-            else if (progress % 50 == 0 && pointingAtTarget){
-                TestRenderer.colour = "green";
+            else if(progress % 50 == 0 && pointingAtTarget){
                 ProximityArrowEntity proxyArrow = new ProximityArrowEntity(ModBlockEntityInit.PROXIMITY_ARROW_ENTITY.get(), this.level);
                 proxyArrow.setEntityOwner(this);
                 proxyArrow.setPos(this.getBlockPos().getX() + 0.5, this.getBlockPos().getY() + 1.2, this.getBlockPos().getZ() + 0.5);
                 Vec3 resultantVector = new Vec3((target.getX() - this.getBlockPos().getX()),
-                        (target.getY() - this.getBlockPos().getY()),
+                        1,
                         (target.getZ() - this.getBlockPos().getZ()));
                 if(!inflight){
-                    System.out.println("launch");
                     proxyArrow.setDeltaMovement(resultantVector);
-                    if(proxyArrow.getDeltaMovement().length() > 0.1){
+                    if(proxyArrow.getDeltaMovement().length() > 1){
                         proxyArrow.setDeltaMovement(proxyArrow.getDeltaMovement().multiply(
                                 1/proxyArrow.getDeltaMovement().length(),
                                 1/proxyArrow.getDeltaMovement().length(),
@@ -106,14 +106,14 @@ public class PRYBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag nbt) {
         super.saveAdditional(nbt);
-        nbt.putInt("progress", this.progress);
+        //nbt.putInt("progress", this.progress);
         nbt.putFloat("facing", this.facing);
     }
 
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
-        this.progress = nbt.getInt("progress");
+        //this.progress = nbt.getInt("progress");
         this.facing = nbt.getFloat("facing");
     }
 
