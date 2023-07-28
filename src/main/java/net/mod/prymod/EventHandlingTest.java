@@ -70,7 +70,7 @@ public class EventHandlingTest {
     public void attackPigTest(AttackEntityEvent event){
         Entity target = event.getTarget();
         if(target instanceof Pig){
-            if(event.getEntity().level.isClientSide) return;
+            if(event.getEntity().level().isClientSide) return;
             event.getEntity().displayClientMessage(Component.literal("pig attacked test msg"), false);
 
         }
@@ -83,7 +83,7 @@ public class EventHandlingTest {
             event.getLevel().playSound(event.getEntity(), event.getPos(), ModSounds.EXPLOSION_ON_CAST.get(), SoundSource.BLOCKS, 1f, 1f);
         }
 
-        if(result != null && !event.getEntity().level.isClientSide && event.getItemStack().getItem() instanceof TestWand){
+        if(result != null && !event.getEntity().level().isClientSide && event.getItemStack().getItem() instanceof TestWand){
             event.getEntity().displayClientMessage(Component.literal("test from rightclick §4entity"), false);
             event.getLevel().explode(
                     null,
@@ -97,7 +97,7 @@ public class EventHandlingTest {
         }
 
         //explodes the target block
-        if(event.getItemStack().getItem() instanceof TestWand && !event.getEntity().level.isClientSide){
+        if(event.getItemStack().getItem() instanceof TestWand && !event.getEntity().level().isClientSide){
             event.getEntity().displayClientMessage(Component.literal("test from rightclick"), false);
             double rayTraceDistance = 100D;
             HitResult hit = event.getEntity().pick(rayTraceDistance, 0, false);
@@ -132,7 +132,7 @@ public class EventHandlingTest {
         Vec3 endVec = startPos.add((double)additionX * d0, (double)additionY * d0, (double)additionZ * d0);
         AABB startEndBox = new AABB(startPos, endVec);
         Entity entity = null;
-        for(Entity entity1 : player.level.getEntities(player, startEndBox, (val) -> true)) {
+        for(Entity entity1 : player.level().getEntities(player, startEndBox, (val) -> true)) {
             AABB aabb = entity1.getBoundingBox().inflate(entity1.getPickRadius());
             Optional<Vec3> optional = aabb.clip(startPos, endVec);
             if (aabb.contains(startPos)) {

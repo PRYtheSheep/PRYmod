@@ -78,9 +78,9 @@ public class ProximityArrowEntity extends AbstractArrow {
 
     @Override
     public void tick() {
-        if(this.level.isClientSide) return;
+        if(this.level().isClientSide) return;
         super.tick();
-        Player player = this.level.getNearestPlayer(this, 50);
+        Player player = this.level().getNearestPlayer(this, 50);
 
         if(target == null){
             this.kill();
@@ -99,7 +99,7 @@ public class ProximityArrowEntity extends AbstractArrow {
                 particlePosDifference = particlePosDifference.scale(1/particlePosDifference.length());
             }
             Vec3 particlePos = currentPos.add(particlePosDifference.scale(3));
-            ServerLevel serverLevel = (ServerLevel) this.level;
+            ServerLevel serverLevel = (ServerLevel) this.level();
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, 0, particlePosDifference.x, particlePosDifference.y,particlePosDifference.z, 1);
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, 0, particlePosDifference.x, particlePosDifference.y,particlePosDifference.z, 1.1);
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, 0, particlePosDifference.x, particlePosDifference.y,particlePosDifference.z, 0.9);
@@ -108,8 +108,8 @@ public class ProximityArrowEntity extends AbstractArrow {
             //this.level.addParticle(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, particlePosDifference.x*1.1, particlePosDifference.y*1.1,particlePosDifference.z*1.1);
         }
 
-        if(!this.level.isClientSide() && target != null && progress <= 1){
-            this.level.playSound(this, this.blockPosition(), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.NEUTRAL, 10f, 10f);
+        if(!this.level().isClientSide() && target != null && progress <= 1){
+            this.level().playSound(this, this.blockPosition(), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.NEUTRAL, 10f, 10f);
 
             this.setDeltaMovement(resultantVector);
 
@@ -142,8 +142,8 @@ public class ProximityArrowEntity extends AbstractArrow {
                 ));
             }
 
-            if(resultantVector.length() <= 2 && !this.level.isClientSide && entityOwner != null){
-                this.level.explode(
+            if(resultantVector.length() <= 2 && !this.level().isClientSide && entityOwner != null){
+                this.level().explode(
                         null,
                         this.getX(),
                         this.getY(),

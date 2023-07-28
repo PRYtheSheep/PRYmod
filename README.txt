@@ -1,4 +1,5 @@
-This repo tracks the progress of my mod 1.20
+This repo tracks the progress of my mod
+Updated to 1.20.1
 
 TO DO:
 fix bounding box rendering when multiple targets are tracked (need to test for bugs, can expand to more targets)

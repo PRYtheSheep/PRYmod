@@ -8,10 +8,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -34,6 +33,7 @@ import net.mod.prymod.sound.ModSounds;
 import org.slf4j.Logger;
 
 
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(PRYmod.MODID)
 public class PRYmod
@@ -48,6 +48,7 @@ public class PRYmod
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModCreativeModeTab.register(modEventBus);
         itemClass.register(modEventBus);
         ModBlock.register(modEventBus);
         MinecraftForge.EVENT_BUS.register(new EventHandlingTest());
@@ -71,13 +72,13 @@ public class PRYmod
         ModMessages.register();
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if(event.getTab() == CreativeModeTabs.INGREDIENTS){
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS){
             event.accept(itemClass.BLACK_OPAL);
             event.accept(itemClass.RAW_BLACK_OPAL);
         }
-        if(event.getTab() == ModCreativeModeTab.PRYMOD_TAB){
+        if(event.getTab() == ModCreativeModeTab.PRYMOD_TAB.get()){
             event.accept(itemClass.BLACK_OPAL);
             event.accept(itemClass.RAW_BLACK_OPAL);
             event.accept(ModBlock.BLACK_OPAL_BLOCK);

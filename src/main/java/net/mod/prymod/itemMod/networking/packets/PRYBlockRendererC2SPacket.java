@@ -46,7 +46,7 @@ public class PRYBlockRendererC2SPacket {
         context.enqueueWork(() -> {
             //SERVER SIDE
             ServerPlayer player = context.getSender();
-            ServerLevel level = (ServerLevel) player.level;
+            ServerLevel level = (ServerLevel) player.level();
             BlockEntity entity = level.getBlockEntity(blockPos);
             if(entity instanceof PRYBlockEntity entity1){
                 entity1.facing = facing;
