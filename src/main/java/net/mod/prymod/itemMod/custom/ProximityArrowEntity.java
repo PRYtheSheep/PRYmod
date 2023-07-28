@@ -1,6 +1,7 @@
 package net.mod.prymod.itemMod.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -85,6 +86,7 @@ public class ProximityArrowEntity extends AbstractArrow {
             this.kill();
             return;
         }
+
 
         Vec3 resultantVector = new Vec3((target.getEyePosition().x - this.getX()),
                 (target.getEyePosition().y - this.getY()),

@@ -74,6 +74,7 @@ public class PRYBlockEntity extends BlockEntity {
                 return;
             }
             else if(progress % 50 == 0 && pointingAtTarget){
+
                 ProximityArrowEntity proxyArrow = new ProximityArrowEntity(ModBlockEntityInit.PROXIMITY_ARROW_ENTITY.get(), this.level);
                 proxyArrow.setEntityOwner(this);
                 proxyArrow.setPos(this.getBlockPos().getX() + 0.5, this.getBlockPos().getY() + 1.2, this.getBlockPos().getZ() + 0.5);
