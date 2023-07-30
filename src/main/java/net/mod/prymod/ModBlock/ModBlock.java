@@ -194,7 +194,7 @@ public class ModBlock {
     public static final RegistryObject<PRYBlock> PRYBLOCK = registerBlock("pryblock", () ->
             new PRYBlock(BlockBehaviour
                     .Properties.copy(Blocks.IRON_BLOCK)
-                    .strength(1f)
+                    .strength(0.1f)
                     .noOcclusion()
             ));
 

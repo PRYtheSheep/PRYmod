@@ -1,5 +1,6 @@
 package net.mod.prymod.itemMod.client;
 
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -20,7 +21,9 @@ public class ClientStartup {
         @SubscribeEvent
         public static void doSetup(FMLClientSetupEvent event) {
             EntityRenderers.register(ModBlockEntityInit.PROXIMITY_ARROW_ENTITY.get(), ProximityArrowRenderer::new);
-
+            event.enqueueWork(() -> {
+                MenuScreens.register(GUIRegister.PRYBLOCK_CONTAINER.get(), PRYBlockScreen::new);
+            });
         }
 
         @SubscribeEvent

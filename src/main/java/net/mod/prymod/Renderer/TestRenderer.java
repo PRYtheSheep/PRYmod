@@ -49,6 +49,7 @@ public class TestRenderer {
     static double previousY;
     static double previousZ;
     public static ArrayList<Vector3f> previousPos = new ArrayList<>();
+    public static int currentTick = 0;
 
     @SubscribeEvent
     public static void onWorldRenderLast(RenderLevelStageEvent event){
@@ -58,6 +59,7 @@ public class TestRenderer {
         if(livingEntityRGBHashMap.isEmpty()) return;
 
         if(Minecraft.getInstance().player == null) return;
+        if(event.getRenderTick() %10 == 0) return;
         Player player = Minecraft.getInstance().player;
         PoseStack stack = event.getPoseStack();
 

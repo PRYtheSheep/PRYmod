@@ -26,6 +26,7 @@ import net.mod.prymod.ModBlock.ModBlock;
 import net.mod.prymod.ModBlock.ModBlockEntityInit;
 import net.mod.prymod.itemMod.ModCreativeModeTab;
 import net.mod.prymod.itemMod.client.ClientStartup;
+import net.mod.prymod.itemMod.client.GUIRegister;
 import net.mod.prymod.itemMod.custom.TestWand;
 import net.mod.prymod.itemMod.itemClass;
 import net.mod.prymod.itemMod.networking.ModMessages;
@@ -56,6 +57,7 @@ public class PRYmod
         ModSounds.register(modEventBus);
         ModBlockEntityInit.BLOCK_ENTITY.register(modEventBus);
         ModBlockEntityInit.ENTITY_TYPE.register(modEventBus);
+        GUIRegister.MENU_TYPES.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);

@@ -75,6 +75,7 @@ public class ProximityArrowEntity extends AbstractArrow {
     PRYBlockEntity entityOwner = null;
     int progress = 0;
     public Entity target = null;
+    public Vec3 previousPosition = null;
 
     @Override
     public void tick() {
@@ -94,7 +95,7 @@ public class ProximityArrowEntity extends AbstractArrow {
 
         if(target != null){
             Vec3 currentPos = new Vec3(this.getX(), this.getY(), this.getZ());
-            Vec3 particlePosDifference = resultantVector.scale(-1);
+            Vec3 particlePosDifference = this.getDeltaMovement().scale(-1);
             if(particlePosDifference.length() > 1){
                 particlePosDifference = particlePosDifference.scale(1/particlePosDifference.length());
             }
@@ -103,9 +104,6 @@ public class ProximityArrowEntity extends AbstractArrow {
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, 0, particlePosDifference.x, particlePosDifference.y,particlePosDifference.z, 1);
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, 0, particlePosDifference.x, particlePosDifference.y,particlePosDifference.z, 1.1);
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, 0, particlePosDifference.x, particlePosDifference.y,particlePosDifference.z, 0.9);
-            //this.level.addParticle(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, particlePosDifference.x, particlePosDifference.y,particlePosDifference.z );
-            //this.level.addParticle(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, particlePosDifference.x*0.9, particlePosDifference.y*0.9,particlePosDifference.z*0.9);
-            //this.level.addParticle(ParticleTypes.LARGE_SMOKE, particlePos.x, particlePos.y, particlePos.z, particlePosDifference.x*1.1, particlePosDifference.y*1.1,particlePosDifference.z*1.1);
         }
 
         if(!this.level().isClientSide() && target != null && progress <= 1){
@@ -168,14 +166,33 @@ public class ProximityArrowEntity extends AbstractArrow {
                 }
             }
 
+            if(previousPosition == null){
+                previousPosition = new Vec3(this.getX(), this.getY(), this.getZ());
+            }
+            else{
+                Vec3 currentPosition = new Vec3(this.getX(), this.getY(), this.getZ());
+                if(previousPosition.equals(currentPosition)){
+                    this.level().explode(
+                            null,
+                            this.getX(),
+                            this.getY(),
+                            this.getZ(),
+                            3F,
+                            Level.ExplosionInteraction.NONE);
+                    this.kill();
+
+                    entityOwner.inflight = false;
+                    target = null;
+                    if(player != null){
+                        player.displayClientMessage(Component.literal("§cMissile detonated"), true);
+                    }
+                }
+                else{
+                    previousPosition = currentPosition;
+                }
+            }
+
             progress++;
-
-
-
-            /*if(this.getOwner() instanceof Player){
-                ((Player) this.getOwner()).displayClientMessage(Component.literal(
-                        "X: "+resultantVector.x+" Y: "+resultantVector.y+" Z: "+resultantVector.z), false);
-            }*/
         }
 
 
