@@ -7,6 +7,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.mod.prymod.ModBlock.PRYBlockContainer;
+import net.mod.prymod.ModBlock.PRYGeneratorContainer;
 import net.mod.prymod.PRYmod;
 
 public class GUIRegister {
@@ -15,6 +16,9 @@ public class GUIRegister {
 
     public static final RegistryObject<MenuType<PRYBlockContainer>> PRYBLOCK_CONTAINER = MENU_TYPES.register("pryblock",
             () -> IForgeMenuType.create((windowId, inv, data) -> new PRYBlockContainer(windowId, inv.player, data.readBlockPos())));
+
+    public static final RegistryObject<MenuType<PRYGeneratorContainer>> PRYGENERATOR_CONTAINER = MENU_TYPES.register("prygenerator",
+            () -> IForgeMenuType.create((windowId, inv, data) -> new PRYGeneratorContainer(windowId, inv.player, data.readBlockPos())));
 
     public static void init(IEventBus modEventBus) {
         MENU_TYPES.register(modEventBus);

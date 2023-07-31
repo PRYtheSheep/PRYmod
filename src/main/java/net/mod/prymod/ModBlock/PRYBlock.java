@@ -64,7 +64,7 @@ public class PRYBlock extends Block implements EntityBlock {
                 MenuProvider containerProvider = new MenuProvider() {
                     @Override
                     public Component getDisplayName() {
-                        return Component.translatable("test");
+                        return Component.translatable("PRYBlock");
                     }
 
                     @Override

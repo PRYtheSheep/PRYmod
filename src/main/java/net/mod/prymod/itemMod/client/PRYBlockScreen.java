@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.mod.prymod.ModBlock.PRYBlockContainer;
-import net.mod.prymod.ModBlock.PRYBlockEntity;
 import net.mod.prymod.PRYmod;
 
 public class PRYBlockScreen extends AbstractContainerScreen<PRYBlockContainer> {
