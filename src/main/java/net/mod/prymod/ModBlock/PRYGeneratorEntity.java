@@ -4,9 +4,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -27,6 +29,7 @@ public class PRYGeneratorEntity extends BlockEntity {
 
     public static final String INPUT_ITEMS_TAG = "input_items_tag";
     public static final String ENERGY_TAG = "energy_tag";
+    public static final String BURNTIMER_TAG = "burntimer_tag"
 
     public static final int GENERATE = 50;
     public static final int MAXTRANSFER = 1000;
@@ -35,6 +38,7 @@ public class PRYGeneratorEntity extends BlockEntity {
     public static final int INPUT_SLOT = 0;
     public static final int INPUT_SLOT_COUNT = 1;
     public static final int SLOT_COUNT = 0;
+    public int burnTime = 0;
 
     public final ItemStackHandler inputItems = createItemHandler(INPUT_SLOT_COUNT);
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new CombinedInvWrapper(inputItems));
@@ -68,7 +72,9 @@ public class PRYGeneratorEntity extends BlockEntity {
     });
 
     public void tick(){
+        if(this.level.isClientSide) return;
 
+        generateEnergy(); //check input item, if is fuel, increase the burn timer. If burn timer > 0 and not at capacity, make energy
     }
 
     public ItemStackHandler getItems() {
@@ -84,17 +90,19 @@ public class PRYGeneratorEntity extends BlockEntity {
         super.saveAdditional(nbt);
         nbt.put(INPUT_ITEMS_TAG, inputItems.serializeNBT());
         nbt.put(ENERGY_TAG, energy.serializeNBT());
+        nbt.putInt(BURNTIMER_TAG, burnTime);
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        if (tag.contains(INPUT_ITEMS_TAG)) {
-            inputItems.deserializeNBT(tag.getCompound(INPUT_ITEMS_TAG));
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
+        if (nbt.contains(INPUT_ITEMS_TAG)) {
+            inputItems.deserializeNBT(nbt.getCompound(INPUT_ITEMS_TAG));
         }
-        if (tag.contains(ENERGY_TAG)) {
-            energy.deserializeNBT(tag.get(ENERGY_TAG));
+        if (nbt.contains(ENERGY_TAG)) {
+            energy.deserializeNBT(nbt.get(ENERGY_TAG));
         }
+        this.burnTime = nbt.getInt(BURNTIMER_TAG);
     }
 
     @Nonnull
@@ -120,6 +128,20 @@ public class PRYGeneratorEntity extends BlockEntity {
             return energyHandler.cast();
         } else {
             return super.getCapability(cap, side);
+        }
+    }
+
+    public void generateEnergy(){
+        if(energy.getEnergyStored() >= energy.getMaxEnergyStored()) return;
+
+        setBurnTime();
+    }
+
+    public void setBurnTime(){
+        //function to set the burn timer;
+        ItemStack item = inputItems.getStackInSlot(INPUT_SLOT);
+        if(item.is(Items.COAL)){
+            
         }
     }
 }

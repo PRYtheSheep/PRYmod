@@ -21,7 +21,7 @@ public class PRYGeneratorContainer extends AbstractContainerMenu {
         super(GUIRegister.PRYGENERATOR_CONTAINER.get(), windowId);
         this.pos = pos;
         if (player.level().getBlockEntity(pos) instanceof PRYGeneratorEntity generator) {
-            addSlot(new SlotItemHandler(generator.getItems(), INPUT_SLOT, 64, 24));
+            addSlot(new SlotItemHandler(generator.getItems(), INPUT_SLOT, 72, 33));
             addDataSlot(new DataSlot() {
                 @Override
                 public int get() {
@@ -45,7 +45,7 @@ public class PRYGeneratorContainer extends AbstractContainerMenu {
                 }
             });
         }
-        layoutPlayerInventorySlots(player.getInventory(), 10, 70);
+        layoutPlayerInventorySlots(player.getInventory(), 8, 84);
     }
 
     public int getPower() {

@@ -23,6 +23,7 @@ public class ClientStartup {
             EntityRenderers.register(ModBlockEntityInit.PROXIMITY_ARROW_ENTITY.get(), ProximityArrowRenderer::new);
             event.enqueueWork(() -> {
                 MenuScreens.register(GUIRegister.PRYBLOCK_CONTAINER.get(), PRYBlockScreen::new);
+                MenuScreens.register(GUIRegister.PRYGENERATOR_CONTAINER.get(), PRYGeneratorScreen::new);
             });
         }
 

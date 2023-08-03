@@ -7,5 +7,6 @@ add gui (added simple gui for pryblock) (added stuff for gen gui)
 add crafting recipes
 textures
 custom sounds?
+added some stuff to gen power
 
-this line is added as a test from laptop
+
