@@ -106,8 +106,8 @@ public class PRYBlockEntity extends BlockEntity {
             if(progress %2 == 0 && progressCount == -1) progressCount = progress;
             if(progress != -1 && progress - progressCount <= 100){
                 RGB currentRGB = PRYRadarEntity.livingEntityRGBHashMap.get(target);
-                if(progress %4 == 0 &&currentRGB.equals(new RGB(0, 1, 1))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(1, 1, 0));
-                else if(progress %4 == 0 && currentRGB.equals(new RGB(1, 1, 0))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(0, 1, 1));
+                if(progress %3 == 0 &&currentRGB.equals(new RGB(0, 1, 1))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(1, 1, 0));
+                else if(progress %3 == 0 && currentRGB.equals(new RGB(1, 1, 0))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(0, 1, 1));
                 if(progress-progressCount == 100) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(0, 1, 1));
 
                 this.inflight = false;
