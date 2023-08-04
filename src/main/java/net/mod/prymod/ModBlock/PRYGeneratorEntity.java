@@ -29,7 +29,7 @@ public class PRYGeneratorEntity extends BlockEntity {
 
     public static final String INPUT_ITEMS_TAG = "input_items_tag";
     public static final String ENERGY_TAG = "energy_tag";
-    public static final String BURNTIMER_TAG = "burntimer_tag"
+    public static final String BURNTIMER_TAG = "burntimer_tag";
 
     public static final int GENERATE = 50;
     public static final int MAXTRANSFER = 1000;
@@ -74,6 +74,7 @@ public class PRYGeneratorEntity extends BlockEntity {
     public void tick(){
         if(this.level.isClientSide) return;
 
+        //Server side
         generateEnergy(); //check input item, if is fuel, increase the burn timer. If burn timer > 0 and not at capacity, make energy
     }
 
@@ -133,15 +134,9 @@ public class PRYGeneratorEntity extends BlockEntity {
 
     public void generateEnergy(){
         if(energy.getEnergyStored() >= energy.getMaxEnergyStored()) return;
-
-        setBurnTime();
     }
 
     public void setBurnTime(){
-        //function to set the burn timer;
-        ItemStack item = inputItems.getStackInSlot(INPUT_SLOT);
-        if(item.is(Items.COAL)){
-            
-        }
+
     }
 }
