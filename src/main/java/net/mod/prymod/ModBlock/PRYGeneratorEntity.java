@@ -3,11 +3,17 @@ package net.mod.prymod.ModBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -21,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.function.Predicate;
 
 public class PRYGeneratorEntity extends BlockEntity {
     public PRYGeneratorEntity(BlockPos pos, BlockState state) {
@@ -74,8 +81,13 @@ public class PRYGeneratorEntity extends BlockEntity {
     public void tick(){
         if(this.level.isClientSide) return;
 
-        //Server side
-        generateEnergy(); //check input item, if is fuel, increase the burn timer. If burn timer > 0 and not at capacity, make energy
+        Predicate<Entity> predicate = (i) -> (i instanceof Player);
+        Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 10, predicate);
+        if(player != null){
+            player.displayClientMessage(Component.literal("burntime " + burnTime + " energy " + energy.getEnergyStored()), true);
+        }
+
+        generateEnergy();
     }
 
     public ItemStackHandler getItems() {
@@ -134,9 +146,21 @@ public class PRYGeneratorEntity extends BlockEntity {
 
     public void generateEnergy(){
         if(energy.getEnergyStored() >= energy.getMaxEnergyStored()) return;
-    }
 
-    public void setBurnTime(){
+        if(burnTime > 0){
+            int difference = energy.getMaxEnergyStored() - energy.getEnergyStored();
+            if(difference > GENERATE) energy.receiveEnergy(GENERATE, false);
+            else energy.receiveEnergy(difference, false);
+            burnTime -= 1000;
+            if(burnTime < 0) burnTime = 0;
+        }
 
+        ItemStack itemStack = inputItems.getStackInSlot(INPUT_SLOT);
+        if(!itemStack.isEmpty() && itemStack.is(Items.COAL)){
+            int additionalBurnTime = ForgeHooks.getBurnTime(itemStack, RecipeType.SMELTING);
+            burnTime += additionalBurnTime;
+            inputItems.extractItem(INPUT_SLOT, 1, false);
+        }
+        setChanged();
     }
 }

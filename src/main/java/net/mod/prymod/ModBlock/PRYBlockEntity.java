@@ -21,6 +21,8 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.ISystemReportExtender;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -41,11 +43,25 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Predicate;
 
+
+
 public class PRYBlockEntity extends BlockEntity {
 
     public PRYBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntityInit.PRYBLOCKENTITY.get(), pos, state);
     }
+
+    public static final String FACING = "facing";
+    public static final String INPUT_ITEMS_TAG = "input_items_tag";
+    public static final String ENERGY_TAG = "energy_tag";
+
+    public static final int CAPACITY = 10000;
+    public static final int MAXRECEIVE = 1000;
+    public static final int MAXTRANSFER = 0;
+
+    public static final int INPUT_SLOT = 0;
+    public static final int INPUT_SLOT_COUNT = 1;
+    public static final int SLOT_COUNT = 0;
 
     int progress = 0;
     public float facing = -1;
@@ -56,19 +72,34 @@ public class PRYBlockEntity extends BlockEntity {
     public boolean inflight = false;
     public int progressCount = -1;
 
-    public static final String FACING = "facing";
-    public static final String INPUT_ITEMS_TAG = "input_items_tag";
-
-    public static final int INPUT_SLOT = 0;
-    public static final int INPUT_SLOT_COUNT = 1;
-    public static final int SLOT_COUNT = 0;
-
     public final ItemStackHandler inputItems = createItemHandler(INPUT_SLOT_COUNT);
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new CombinedInvWrapper(inputItems));
     private final LazyOptional<IItemHandler> inputItemHandler = LazyOptional.of(() -> new AdaptedItemHandler(inputItems) {
         @Override
         public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
             return ItemStack.EMPTY;
+        }
+    });
+    private final EnergyStorage energy = createEnergyStorage();
+    private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> new AdaptedEnergyStorage(energy) {
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+            return 0;
+        }
+
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {
+            return 0;
+        }
+
+        @Override
+        public boolean canExtract() {
+            return false;
+        }
+
+        @Override
+        public boolean canReceive() {
+            return false;
         }
     });
 
@@ -80,7 +111,9 @@ public class PRYBlockEntity extends BlockEntity {
             inputItems.extractItem(INPUT_SLOT, 1, false);
         }
 
-        if(!isConnectedToGenerator(this.getBlockPos())) return;
+        if(!isConnectedToGenerator(this.getBlockPos())){
+            return;
+        }
         if(target != null && target.getHealth() == 0){
             target = null;
             inflight = false;
@@ -106,8 +139,8 @@ public class PRYBlockEntity extends BlockEntity {
             if(progress %2 == 0 && progressCount == -1) progressCount = progress;
             if(progress != -1 && progress - progressCount <= 100){
                 RGB currentRGB = PRYRadarEntity.livingEntityRGBHashMap.get(target);
-                if(progress %3 == 0 &&currentRGB.equals(new RGB(0, 1, 1))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(1, 1, 0));
-                else if(progress %3 == 0 && currentRGB.equals(new RGB(1, 1, 0))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(0, 1, 1));
+                if(progress %4 == 0 &&currentRGB.equals(new RGB(0, 1, 1))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(1, 1, 0));
+                else if(progress %4 == 0 && currentRGB.equals(new RGB(1, 1, 0))) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(0, 1, 1));
                 if(progress-progressCount == 100) PRYRadarEntity.livingEntityRGBHashMap.put(target, new RGB(0, 1, 1));
 
                 this.inflight = false;
@@ -184,6 +217,11 @@ public class PRYBlockEntity extends BlockEntity {
                 setChanged();
             }
         };
+    }
+
+    @Nonnull
+    private EnergyStorage createEnergyStorage() {
+        return new EnergyStorage(CAPACITY, MAXRECEIVE, MAXTRANSFER);
     }
 
     public ItemStackHandler getInputItems(){
