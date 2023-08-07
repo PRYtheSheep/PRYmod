@@ -35,6 +35,7 @@ import net.mod.prymod.itemMod.custom.ProximityArrowEntity;
 import net.mod.prymod.itemMod.itemClass;
 import net.mod.prymod.itemMod.networking.ModMessages;
 import net.mod.prymod.itemMod.networking.packets.PRYBlockEntityS2C;
+import net.mod.prymod.utils.DFSforBlock;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -43,6 +44,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static net.mod.prymod.utils.DFSforBlock.isConnectedToBlockEntity;
 
 
 public class PRYBlockEntity extends BlockEntity {
@@ -111,7 +113,7 @@ public class PRYBlockEntity extends BlockEntity {
             inputItems.extractItem(INPUT_SLOT, 1, false);
         }
 
-        if(!isConnectedToGenerator(this.getBlockPos())){
+        if(isConnectedToBlockEntity(this, PRYGeneratorEntity.class) == null){
             return;
         }
         if(target != null && target.getHealth() == 0){
@@ -119,8 +121,9 @@ public class PRYBlockEntity extends BlockEntity {
             inflight = false;
             return;
         }
-        if(isConnectedToRadar(this.getBlockPos()) != null){
-            BlockPos radarPos = isConnectedToRadar(this.getBlockPos());
+        if(isConnectedToBlockEntity(this, PRYRadarEntity.class) != null){
+            BlockPos radarPos = isConnectedToBlockEntity(this, PRYRadarEntity.class);
+            System.out.println(radarPos);
             radarEntity = (PRYRadarEntity) this.level.getBlockEntity(radarPos);
         }
         else return;
@@ -228,188 +231,4 @@ public class PRYBlockEntity extends BlockEntity {
         return inputItems;
     }
 
-    private boolean isConnectedToGenerator(BlockPos startPos){
-        if(level==null) return false;
-        //Depth first search using a stack
-        //Search order positive x, positive z, negative x, negative z
-        //Discovered positions are stored in a LinkedList
-
-        //Initialise the discovered linkedlist and stack
-        LinkedList<BlockPos> discovered = new LinkedList<>();
-        Stack<BlockPos> stack = new Stack<>();
-
-        //Push in the start position into stack and set it as discovered
-        stack.push(startPos);
-
-        //Depth first search loop
-        while(!stack.isEmpty()){
-            BlockPos currentPos = stack.peek();
-            BlockPos nextPos = null;
-
-            //Exit condition
-            if(level.getBlockEntity(currentPos) instanceof PRYGeneratorEntity){
-                return true;
-            }
-
-            //Cable must connect to the designated port of the block, so check if the current position is the start
-            //position
-            if(currentPos.equals(startPos)){
-                switch(this.getBlockState().getValue(PRYRadar.FACING)){
-                    case NORTH -> {
-                        nextPos = new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()-1);
-                    }
-                    case EAST -> {
-                        nextPos = new BlockPos(currentPos.getX()+1, currentPos.getY(), currentPos.getZ());
-                    }
-                    case SOUTH -> {
-                        nextPos = new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()+1);
-                    }
-                    case WEST -> {
-                        nextPos = new BlockPos(currentPos.getX()-1, currentPos.getY(), currentPos.getZ());
-                    }
-                }
-                Block block = level.getBlockState(nextPos).getBlock();
-                if(block instanceof Cable && !contains(discovered, nextPos)){
-                    stack.push(nextPos);
-                    discovered.add(nextPos);
-                    discovered.add(startPos);
-                }
-                else stack.pop();
-                continue;
-            }
-
-            //Try positive x first
-            nextPos = new BlockPos(currentPos.getX()+1, currentPos.getY(), currentPos.getZ());
-            if(!contains(discovered, nextPos) && (level.getBlockState(nextPos).getBlock() instanceof Cable || level.getBlockState(nextPos).getBlock() instanceof PRYGenerator)){
-                stack.push(nextPos);
-                discovered.add(nextPos);
-                continue;
-            }
-
-            //Try positive z next
-            nextPos = new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()+1);
-            if(!contains(discovered, nextPos) && (level.getBlockState(nextPos).getBlock() instanceof Cable || level.getBlockState(nextPos).getBlock() instanceof PRYGenerator)){
-                stack.push(nextPos);
-                discovered.add(nextPos);
-                continue;
-            }
-
-            //Try negative x next
-            nextPos = new BlockPos(currentPos.getX()-1, currentPos.getY(), currentPos.getZ());
-            if(!contains(discovered, nextPos) && (level.getBlockState(nextPos).getBlock() instanceof Cable || level.getBlockState(nextPos).getBlock() instanceof PRYGenerator)){
-                stack.push(nextPos);
-                discovered.add(nextPos);
-                continue;
-            }
-
-            //Try negative z next
-            nextPos = new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()-1);
-            if(!contains(discovered, nextPos) && (level.getBlockState(nextPos).getBlock() instanceof Cable || level.getBlockState(nextPos).getBlock() instanceof PRYGenerator)){
-                stack.push(nextPos);
-                discovered.add(nextPos);
-                continue;
-            }
-
-            //No positions added to stack, pop the top one
-            stack.pop();
-        }
-        return false;
-    }
-
-    private BlockPos isConnectedToRadar(BlockPos startPos){
-        if(level==null) return null;
-        //Depth first search using a stack
-        //Search order positive x, positive z, negative x, negative z
-        //Discovered positions are stored in a LinkedList
-
-        //Initialise the discovered linkedlist and stack
-        LinkedList<BlockPos> discovered = new LinkedList<>();
-        Stack<BlockPos> stack = new Stack<>();
-
-        //Push in the start position into stack and set it as discovered
-        stack.push(startPos);
-
-        //Depth first search loop
-        while(!stack.isEmpty()){
-            BlockPos currentPos = stack.peek();
-            BlockPos nextPos = null;
-
-            //Exit condition
-            if(level.getBlockEntity(currentPos) instanceof PRYRadarEntity){
-                return currentPos;
-            }
-
-            //Cable must connect to the designated port of the block, so check if the current position is the start
-            //position
-            if(currentPos.equals(startPos)){
-                switch(this.getBlockState().getValue(PRYRadar.FACING)){
-                    case NORTH -> {
-                        nextPos = new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()-1);
-                    }
-                    case EAST -> {
-                        nextPos = new BlockPos(currentPos.getX()+1, currentPos.getY(), currentPos.getZ());
-                    }
-                    case SOUTH -> {
-                        nextPos = new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()+1);
-                    }
-                    case WEST -> {
-                        nextPos = new BlockPos(currentPos.getX()-1, currentPos.getY(), currentPos.getZ());
-                    }
-                }
-                Block block = level.getBlockState(nextPos).getBlock();
-                if(block instanceof Cable && !contains(discovered, nextPos)){
-                    stack.push(nextPos);
-                    discovered.add(nextPos);
-                    discovered.add(startPos);
-                }
-                else stack.pop();
-                continue;
-            }
-
-            //Try positive x first
-            nextPos = new BlockPos(currentPos.getX()+1, currentPos.getY(), currentPos.getZ());
-            if(!contains(discovered, nextPos) && (level.getBlockState(nextPos).getBlock() instanceof Cable || level.getBlockState(nextPos).getBlock() instanceof PRYRadar)){
-                stack.push(nextPos);
-                discovered.add(nextPos);
-                continue;
-            }
-
-            //Try positive z next
-            nextPos = new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()+1);
-            if(!contains(discovered, nextPos) && (level.getBlockState(nextPos).getBlock() instanceof Cable || level.getBlockState(nextPos).getBlock() instanceof PRYRadar)){
-                stack.push(nextPos);
-                discovered.add(nextPos);
-                continue;
-            }
-
-            //Try negative x next
-            nextPos = new BlockPos(currentPos.getX()-1, currentPos.getY(), currentPos.getZ());
-            if(!contains(discovered, nextPos) && (level.getBlockState(nextPos).getBlock() instanceof Cable || level.getBlockState(nextPos).getBlock() instanceof PRYRadar)){
-                stack.push(nextPos);
-                discovered.add(nextPos);
-                continue;
-            }
-
-            //Try negative z next
-            nextPos = new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()-1);
-            if(!contains(discovered, nextPos) && (level.getBlockState(nextPos).getBlock() instanceof Cable || level.getBlockState(nextPos).getBlock() instanceof PRYRadar)){
-                stack.push(nextPos);
-                discovered.add(nextPos);
-                continue;
-            }
-
-            //No positions added to stack, pop the top one
-            stack.pop();
-        }
-        return null;
-    }
-
-    private boolean contains(LinkedList<BlockPos> ll, BlockPos pos){
-        for(BlockPos position : ll){
-            if(pos.equals(position)){
-                return true;
-            }
-        }
-        return false;
-    }
 }

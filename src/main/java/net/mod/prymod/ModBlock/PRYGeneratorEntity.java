@@ -84,7 +84,7 @@ public class PRYGeneratorEntity extends BlockEntity {
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
         Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 10, predicate);
         if(player != null){
-            player.displayClientMessage(Component.literal("burntime " + burnTime + " energy " + energy.getEnergyStored()), true);
+            //player.displayClientMessage(Component.literal("burntime " + burnTime + " energy " + energy.getEnergyStored()), true);
         }
 
         generateEnergy();
