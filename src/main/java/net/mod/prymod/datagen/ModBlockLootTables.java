@@ -3,6 +3,7 @@ package net.mod.prymod.datagen;
 
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.RegistryObject;
 import net.mod.prymod.ModBlock.ModBlock;
@@ -37,6 +38,35 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
         this.add(ModBlock.EBONY_LEAVES.get(), (block ->
                 createLeavesDrops(block, ModBlock.EBONY_LEAVES.get(), NORMAL_LEAVES_SAPLING_CHANCES)));
+
+        dropSelf(ModBlock.CABLE.get());
+        dropSelf(ModBlock.CABLEGENERATOR.get());
+        dropSelf(ModBlock.CABLELAUNCHER.get());
+        dropSelf(ModBlock.CABLERADAR.get());
+        dropSelf(ModBlock.CABLELCURVE.get());
+        dropSelf(ModBlock.CABLETCROSS.get());
+        dropSelf(ModBlock.CABLELCURVE1GENERATOR.get());
+        dropSelf(ModBlock.CABLELCURVE2GENERATOR.get());
+        dropSelf(ModBlock.CABLELCURVE1LAUNCHER.get());
+        dropSelf(ModBlock.CABLELCURVE2LAUNCHER.get());
+        dropSelf(ModBlock.CABLELCURVE1GENERATOR.get());
+        dropSelf(ModBlock.CABLELCURVE2GENERATOR.get());
+        dropSelf(ModBlock.CABLETCROSS1GENERATOR.get());
+        dropSelf(ModBlock.CABLETCROSS2GENERATOR.get());
+        dropSelf(ModBlock.CABLETCROSS3GENERATOR.get());
+        dropSelf(ModBlock.CABLETCROSS1LAUNCHER.get());
+        dropSelf(ModBlock.CABLETCROSS2LAUNCHER.get());
+        dropSelf(ModBlock.CABLETCROSS3LAUNCHER.get());
+        dropSelf(ModBlock.CABLETCROSS1RADAR.get());
+        dropSelf(ModBlock.CABLETCROSS2RADAR.get());
+        dropSelf(ModBlock.CABLETCROSS3RADAR.get());
+        dropSelf(ModBlock.CABLELCURVE1RADAR.get());
+        dropSelf(ModBlock.CABLELCURVE2RADAR.get());
+        dropSelf(ModBlock.PRYBLOCK.get());
+        dropSelf(ModBlock.PRYGENERATOR.get());
+        dropSelf(ModBlock.PRYRADAR.get());
+        dropOther(ModBlock.PRYPROJECTILE.get(), Items.AIR);
+        dropOther(ModBlock.PRYLAUNCHER.get(), Items.AIR);
     }
 
     @Override

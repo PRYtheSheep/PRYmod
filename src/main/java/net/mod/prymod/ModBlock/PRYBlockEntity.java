@@ -60,10 +60,14 @@ public class PRYBlockEntity extends BlockEntity {
     public static final int CAPACITY = 10000;
     public static final int MAXRECEIVE = 1000;
     public static final int MAXTRANSFER = 0;
+    public static final int POWER_DRAW = 1000;
 
     public static final int INPUT_SLOT = 0;
     public static final int INPUT_SLOT_COUNT = 1;
     public static final int SLOT_COUNT = 0;
+
+    //test
+    public int numberOfMissiles = 0;
 
     int progress = 0;
     public float facing = -1;
@@ -109,9 +113,9 @@ public class PRYBlockEntity extends BlockEntity {
         if(this.level.isClientSide) return;
 
         ItemStack itemStack = inputItems.getStackInSlot(INPUT_SLOT);
-        if(itemStack.is(itemClass.BLACK_OPAL.get())){
-            inputItems.extractItem(INPUT_SLOT, 1, false);
-        }
+        if(itemStack.isEmpty() || !itemStack.is(itemClass.PROXIMITY_ARROW.get())) numberOfMissiles = 0;
+        else if(itemStack.is(itemClass.PROXIMITY_ARROW.get())) numberOfMissiles = itemStack.getCount();
+        ModMessages.INSTANCE.send(PacketDistributor.ALL.noArg(), new PRYBlockEntityS2C(new UUID(0, 0), numberOfMissiles, this.getBlockPos()));
 
         if(isConnectedToBlockEntity(this, PRYGeneratorEntity.class) == null){
             return;
@@ -123,7 +127,6 @@ public class PRYBlockEntity extends BlockEntity {
         }
         if(isConnectedToBlockEntity(this, PRYRadarEntity.class) != null){
             BlockPos radarPos = isConnectedToBlockEntity(this, PRYRadarEntity.class);
-            System.out.println(radarPos);
             radarEntity = (PRYRadarEntity) this.level.getBlockEntity(radarPos);
         }
         else return;
@@ -137,7 +140,7 @@ public class PRYBlockEntity extends BlockEntity {
             if(test.length() > 90) return;
 
             target = radarEntity.radarTarget;
-            ModMessages.INSTANCE.send(PacketDistributor.ALL.noArg(), new PRYBlockEntityS2C(target.getUUID(), this.getBlockPos()));
+            ModMessages.INSTANCE.send(PacketDistributor.ALL.noArg(), new PRYBlockEntityS2C(target.getUUID(), -1, this.getBlockPos()));
 
             if(progress %2 == 0 && progressCount == -1) progressCount = progress;
             if(progress != -1 && progress - progressCount <= 100){
@@ -157,7 +160,7 @@ public class PRYBlockEntity extends BlockEntity {
                 Vec3 resultantVector = new Vec3((target.getX() - this.getBlockPos().getX()),
                         1,
                         (target.getZ() - this.getBlockPos().getZ()));
-                if(!inflight){
+                if(!inflight && numberOfMissiles > 0){
                     proxyArrow.setDeltaMovement(resultantVector);
                     if(proxyArrow.getDeltaMovement().length() > 1){
                         proxyArrow.setDeltaMovement(proxyArrow.getDeltaMovement().multiply(
@@ -173,6 +176,8 @@ public class PRYBlockEntity extends BlockEntity {
                     if(player != null){
                         player.displayClientMessage(Component.literal("§aMissile launched"), true);
                     }
+                    numberOfMissiles--;
+                    inputItems.extractItem(INPUT_SLOT, 1, false);
                 }
             }
         }
@@ -186,6 +191,7 @@ public class PRYBlockEntity extends BlockEntity {
         //nbt.putInt("progress", this.progress);
         nbt.putFloat(FACING, this.facing);
         nbt.put(INPUT_ITEMS_TAG, inputItems.serializeNBT());
+        nbt.put(ENERGY_TAG, energy.serializeNBT());
     }
 
     @Override
@@ -193,9 +199,8 @@ public class PRYBlockEntity extends BlockEntity {
         super.load(nbt);
         //this.progress = nbt.getInt("progress");
         this.facing = nbt.getFloat("facing");
-        if (nbt.contains(INPUT_ITEMS_TAG)) {
-            inputItems.deserializeNBT(nbt.getCompound(INPUT_ITEMS_TAG));
-        }
+        if (nbt.contains(INPUT_ITEMS_TAG)) inputItems.deserializeNBT(nbt.getCompound(INPUT_ITEMS_TAG));
+        if(nbt.contains(ENERGY_TAG)) energy.deserializeNBT(nbt.get(ENERGY_TAG));
     }
 
     @NotNull
@@ -207,7 +212,11 @@ public class PRYBlockEntity extends BlockEntity {
             } else {
                 return inputItemHandler.cast();
             }
-        } else {
+        }
+        else if(cap == ForgeCapabilities.ENERGY){
+            return energyHandler.cast();
+        }
+        else {
             return super.getCapability(cap, side);
         }
     }

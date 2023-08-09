@@ -47,6 +47,8 @@ public class PRYGeneratorEntity extends BlockEntity {
     public static final int SLOT_COUNT = 0;
     public int burnTime = 0;
 
+    public PRYBlockEntity pryBlockEntity = null;
+
     public final ItemStackHandler inputItems = createItemHandler(INPUT_SLOT_COUNT);
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new CombinedInvWrapper(inputItems));
     private final LazyOptional<IItemHandler> inputItemHandler = LazyOptional.of(() -> new AdaptedItemHandler(inputItems) {
@@ -82,9 +84,9 @@ public class PRYGeneratorEntity extends BlockEntity {
         if(this.level.isClientSide) return;
 
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
-        Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 10, predicate);
+        Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 5, predicate);
         if(player != null){
-            //player.displayClientMessage(Component.literal("burntime " + burnTime + " energy " + energy.getEnergyStored()), true);
+            player.displayClientMessage(Component.literal("generator burntime " + burnTime + " energy " + energy.getEnergyStored()), true);
         }
 
         generateEnergy();
@@ -136,7 +138,11 @@ public class PRYGeneratorEntity extends BlockEntity {
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return itemHandler.cast();
+            if (side == null) {
+                return itemHandler.cast();
+            } else {
+                return inputItemHandler.cast();
+            }
         } else if (cap == ForgeCapabilities.ENERGY) {
             return energyHandler.cast();
         } else {
@@ -162,5 +168,19 @@ public class PRYGeneratorEntity extends BlockEntity {
             inputItems.extractItem(INPUT_SLOT, 1, false);
         }
         setChanged();
+    }
+
+    public void distributeEnergy(){
+        if(energy.getEnergyStored() <= 0 || pryBlockEntity == null) return;
+
+        pryBlockEntity.getCapability(ForgeCapabilities.ENERGY).map(e -> {
+            if(e.canReceive()){
+                int received = e.receiveEnergy(Math.min(energy.getEnergyStored(), MAXTRANSFER), false);
+                energy.extractEnergy(received, false);
+                setChanged();
+                return received;
+            }
+            return 0;
+        });
     }
 }

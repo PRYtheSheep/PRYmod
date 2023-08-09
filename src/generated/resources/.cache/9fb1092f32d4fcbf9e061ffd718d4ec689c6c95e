@@ -1,8 +1,8 @@
-// 1.19.4	2023-05-10T22:09:23.3304291	Recipes
-974da1a384b4e73491e65b2acd7c6b225f44f743 data/prymod/advancements/recipes/building_blocks/black_opal.json
-4a31913353ed395f08f1e12d94ca6909f504322f data/prymod/advancements/recipes/misc/black_opal_block.json
-d2e65300d980b0298b5a234b9f3657b39450e12a data/prymod/advancements/recipes/misc/black_opal_from_blasting_raw_black_opal.json
-8405db1bd3b3df4f75999909fec2cca5b49f38ed data/prymod/advancements/recipes/misc/black_opal_from_smelting_raw_black_opal.json
+// 1.20.1	2023-08-08T21:53:41.4997093	Recipes
+f9293b10665ffaf92d56240bb3c9ba47e8822e82 data/prymod/advancements/recipes/building_blocks/black_opal.json
+68e4b52fa301017a4737c4985cd7a94fc11271f4 data/prymod/advancements/recipes/misc/black_opal_block.json
+3a72c67b006472129773b0c93caf611b7283249b data/prymod/advancements/recipes/misc/black_opal_from_blasting_raw_black_opal.json
+523dff288cf3b673d09623213400f8bdf09c5bfa data/prymod/advancements/recipes/misc/black_opal_from_smelting_raw_black_opal.json
 588c44760e6522307d1e25197dd99d1f1e3969a2 data/prymod/recipes/black_opal.json
 a26f0a979136583c1eefdfdae88bfadaf00edda9 data/prymod/recipes/black_opal_block.json
 395ea28de08c9d4a8ad99dfc7440ce4f885a4022 data/prymod/recipes/black_opal_from_blasting_raw_black_opal.json

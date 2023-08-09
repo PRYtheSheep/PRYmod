@@ -30,5 +30,6 @@
     "recipes": [
       "prymod:black_opal_from_blasting_raw_black_opal"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

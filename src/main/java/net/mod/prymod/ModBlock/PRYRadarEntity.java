@@ -25,12 +25,10 @@ public class PRYRadarEntity extends BlockEntity {
     }
 
     public LivingEntity radarTarget = null;
-    //public static LinkedList<LivingEntity> livingEntityLinkedList = new LinkedList<>();
     public static LinkedHashMap<LivingEntity, RGB> livingEntityRGBHashMap = new LinkedHashMap<>();
     public void tick(){
         if(this.level.isClientSide) return;
         if(!isConnectedToGenerator(this.getBlockPos())){
-            //livingEntityLinkedList.remove(radarTarget);
             livingEntityRGBHashMap.remove(radarTarget);
             radarTarget = null;
             return;
@@ -41,14 +39,12 @@ public class PRYRadarEntity extends BlockEntity {
         }
 
         if(radarTarget != null && radarTarget.getHealth() == 0) {
-            //livingEntityLinkedList.remove(radarTarget);
             livingEntityRGBHashMap.remove(radarTarget);
             radarTarget = null;
         }
 
         if(Minecraft.getInstance().player != null && radarTarget != null){
             if(radarTarget.distanceTo(Minecraft.getInstance().player) > 128) {
-                //livingEntityLinkedList.remove(radarTarget);
                 livingEntityRGBHashMap.remove(radarTarget);
                 radarTarget = null;
             }

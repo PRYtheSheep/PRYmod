@@ -12,6 +12,7 @@ import java.util.Stack;
 
 public class DFSforBlock {
 
+    //For launcher only
     public static BlockPos isConnectedToBlockEntity(BlockEntity startEntity, Class<? extends BlockEntity> c1){
         Level level = startEntity.getLevel();
         BlockPos startPos = startEntity.getBlockPos();
