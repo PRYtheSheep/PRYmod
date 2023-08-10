@@ -36,6 +36,7 @@ import net.mod.prymod.itemMod.itemClass;
 import net.mod.prymod.itemMod.networking.ModMessages;
 import net.mod.prymod.itemMod.networking.packets.PRYBlockEntityS2C;
 import net.mod.prymod.utils.DFSforBlock;
+import net.mod.prymod.utils.DFSutils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -109,6 +110,28 @@ public class PRYBlockEntity extends BlockEntity {
         }
     });
 
+    private final DFSutils utils = new DFSutils() {
+        @Override
+        public BlockPos getStartPos(BlockEntity blockEntity) {
+            BlockPos currentPos = blockEntity.getBlockPos();
+            switch(blockEntity.getBlockState().getValue(PRYBlock.FACING)){
+                case NORTH -> {
+                    return new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()-1);
+                }
+                case EAST -> {
+                    return new BlockPos(currentPos.getX()+1, currentPos.getY(), currentPos.getZ());
+                }
+                case SOUTH -> {
+                    return new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()+1);
+                }
+                case WEST -> {
+                    return new BlockPos(currentPos.getX()-1, currentPos.getY(), currentPos.getZ());
+                }
+            }
+            return null;
+        }
+    };
+
     public void tick() {
         if(this.level.isClientSide) return;
 
@@ -116,6 +139,9 @@ public class PRYBlockEntity extends BlockEntity {
         if(itemStack.isEmpty() || !itemStack.is(itemClass.PROXIMITY_ARROW.get())) numberOfMissiles = 0;
         else if(itemStack.is(itemClass.PROXIMITY_ARROW.get())) numberOfMissiles = itemStack.getCount();
         ModMessages.INSTANCE.send(PacketDistributor.ALL.noArg(), new PRYBlockEntityS2C(new UUID(0, 0), numberOfMissiles, this.getBlockPos()));
+
+        BlockPos lanjiao = utils.isConnectedToBlockEntity(this, PRYRadarEntity.class);
+        System.out.println("radar pos is " + lanjiao);
 
         if(isConnectedToBlockEntity(this, PRYGeneratorEntity.class) == null){
             return;

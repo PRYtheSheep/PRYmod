@@ -23,6 +23,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.mod.prymod.utils.DFSutils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,6 +80,28 @@ public class PRYGeneratorEntity extends BlockEntity {
             return false;
         }
     });
+
+    private final DFSutils utils = new DFSutils() {
+        @Override
+        public BlockPos getStartPos(BlockEntity blockEntity) {
+            BlockPos currentPos = blockEntity.getBlockPos();
+            switch(blockEntity.getBlockState().getValue(PRYBlock.FACING)){
+                case NORTH -> {
+                    return new BlockPos(currentPos.getX()-1, currentPos.getY(), currentPos.getZ());
+                }
+                case EAST -> {
+                    return new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()-1);
+                }
+                case SOUTH -> {
+                    return new BlockPos(currentPos.getX()+1, currentPos.getY(), currentPos.getZ()+1);
+                }
+                case WEST -> {
+                    return new BlockPos(currentPos.getX(), currentPos.getY(), currentPos.getZ()+1);
+                }
+            }
+            return null;
+        }
+    };
 
     public void tick(){
         if(this.level.isClientSide) return;
