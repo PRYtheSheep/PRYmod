@@ -2,6 +2,7 @@ package net.mod.prymod.itemMod.client;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.StonecutterScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,6 +17,7 @@ public class PRYGeneratorScreen extends AbstractContainerScreen<PRYGeneratorCont
     public PRYGeneratorScreen(PRYGeneratorContainer container, Inventory inventory, Component title) {
         super(container, inventory, title);
         this.inventoryLabelY = this.imageHeight - 110;
+        System.out.println(container.getPower());
     }
 
     @Override

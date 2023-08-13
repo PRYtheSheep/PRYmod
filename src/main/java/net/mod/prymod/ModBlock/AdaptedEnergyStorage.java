@@ -10,31 +10,31 @@ public class AdaptedEnergyStorage implements IEnergyStorage {
     public AdaptedEnergyStorage(EnergyStorage energyStorage){this.iEnergyStorage = energyStorage;}
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        return 0;
+        return iEnergyStorage.receiveEnergy(maxReceive, simulate);
     }
 
     @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
-        return 0;
+        return iEnergyStorage.extractEnergy(maxExtract, simulate);
     }
 
     @Override
     public int getEnergyStored() {
-        return 0;
+        return iEnergyStorage.getEnergyStored();
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return 0;
+        return iEnergyStorage.getMaxEnergyStored();
     }
 
     @Override
     public boolean canExtract() {
-        return false;
+        return iEnergyStorage.canExtract();
     }
 
     @Override
     public boolean canReceive() {
-        return false;
+        return iEnergyStorage.canReceive();
     }
 }

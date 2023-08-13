@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,6 +25,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.mod.prymod.utils.DFSutils;
+import org.apache.logging.log4j.core.appender.rolling.action.IfAll;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,19 +63,13 @@ public class PRYGeneratorEntity extends BlockEntity {
     private final EnergyStorage energy = createEnergyStorage();
     private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> new AdaptedEnergyStorage(energy) {
         @Override
-        public int receiveEnergy(int maxReceive, boolean simulate) {
-            return 0;
-        }
+        public int receiveEnergy(int maxReceive, boolean simulate) {return 0;}
 
         @Override
-        public int extractEnergy(int maxExtract, boolean simulate) {
-            return 0;
-        }
+        public int extractEnergy(int maxExtract, boolean simulate) {return 0;}
 
         @Override
-        public boolean canExtract() {
-            return false;
-        }
+        public boolean canExtract() {return false;}
 
         @Override
         public boolean canReceive() {
@@ -112,7 +108,11 @@ public class PRYGeneratorEntity extends BlockEntity {
             player.displayClientMessage(Component.literal("generator burntime " + burnTime + " energy " + energy.getEnergyStored()), true);
         }
 
+        BlockPos launcherPos = utils.isConnectedToBlockEntity(this, PRYBlockEntity.class);
+        if(launcherPos != null) pryBlockEntity = (PRYBlockEntity) this.level.getBlockEntity(launcherPos);
+
         generateEnergy();
+        distributeEnergy();
     }
 
     public ItemStackHandler getItems() {

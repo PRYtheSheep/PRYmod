@@ -24,9 +24,7 @@ public class PRYGeneratorContainer extends AbstractContainerMenu {
             addSlot(new SlotItemHandler(generator.getItems(), INPUT_SLOT, 72, 33));
             addDataSlot(new DataSlot() {
                 @Override
-                public int get() {
-                    return generator.getStoredPower() & 0xffff;
-                }
+                public int get() {return generator.getStoredPower() & 0xffff;}
 
                 @Override
                 public void set(int pValue) {
@@ -35,9 +33,7 @@ public class PRYGeneratorContainer extends AbstractContainerMenu {
             });
             addDataSlot(new DataSlot() {
                 @Override
-                public int get() {
-                    return (generator.getStoredPower() >> 16) & 0xffff;
-                }
+                public int get() {return (generator.getStoredPower() >> 16) & 0xffff;}
 
                 @Override
                 public void set(int pValue) {

@@ -4,48 +4,34 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.ISystemReportExtender;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.minecraftforge.network.PacketDistributor;
 import net.mod.prymod.Renderer.RGB;
-import net.mod.prymod.Renderer.TestRenderer;
 import net.mod.prymod.itemMod.custom.ProximityArrowEntity;
 import net.mod.prymod.itemMod.itemClass;
 import net.mod.prymod.itemMod.networking.ModMessages;
 import net.mod.prymod.itemMod.networking.packets.PRYBlockEntityS2C;
-import net.mod.prymod.utils.DFSforBlock;
 import net.mod.prymod.utils.DFSutils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Predicate;
-
-import static net.mod.prymod.utils.DFSforBlock.isConnectedToBlockEntity;
 
 
 public class PRYBlockEntity extends BlockEntity {
@@ -91,22 +77,19 @@ public class PRYBlockEntity extends BlockEntity {
     private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> new AdaptedEnergyStorage(energy) {
         @Override
         public int receiveEnergy(int maxReceive, boolean simulate) {
-            return 0;
+            setChanged();
+            return super.receiveEnergy(maxReceive, simulate);
         }
 
         @Override
-        public int extractEnergy(int maxExtract, boolean simulate) {
-            return 0;
-        }
+        public int extractEnergy(int maxExtract, boolean simulate) {return 0;}
 
         @Override
-        public boolean canExtract() {
-            return false;
-        }
+        public boolean canExtract() {return false;}
 
         @Override
         public boolean canReceive() {
-            return false;
+            return true;
         }
     });
 
@@ -140,10 +123,7 @@ public class PRYBlockEntity extends BlockEntity {
         else if(itemStack.is(itemClass.PROXIMITY_ARROW.get())) numberOfMissiles = itemStack.getCount();
         ModMessages.INSTANCE.send(PacketDistributor.ALL.noArg(), new PRYBlockEntityS2C(new UUID(0, 0), numberOfMissiles, this.getBlockPos()));
 
-        BlockPos lanjiao = utils.isConnectedToBlockEntity(this, PRYRadarEntity.class);
-        System.out.println("radar pos is " + lanjiao);
-
-        if(isConnectedToBlockEntity(this, PRYGeneratorEntity.class) == null){
+        if(utils.isConnectedToBlockEntity(this, PRYGeneratorEntity.class) == null){
             return;
         }
         if(target != null && target.getHealth() == 0){
@@ -151,12 +131,18 @@ public class PRYBlockEntity extends BlockEntity {
             inflight = false;
             return;
         }
-        if(isConnectedToBlockEntity(this, PRYRadarEntity.class) != null){
-            BlockPos radarPos = isConnectedToBlockEntity(this, PRYRadarEntity.class);
+        if(utils.isConnectedToBlockEntity(this, PRYRadarEntity.class) != null){
+            BlockPos radarPos = utils.isConnectedToBlockEntity(this, PRYRadarEntity.class);
             radarEntity = (PRYRadarEntity) this.level.getBlockEntity(radarPos);
         }
         else return;
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
+
+        Player player1 = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 5, predicate);
+        if(player1 != null){
+            player1.displayClientMessage(Component.literal(" energy " + energy.getEnergyStored()), true);
+        }
+
         if(radarEntity.radarTarget != target) progressCount = -1;
         //Spawn projectile if target is found
         if(radarEntity.radarTarget != null){
