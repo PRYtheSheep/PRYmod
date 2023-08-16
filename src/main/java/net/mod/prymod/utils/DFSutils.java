@@ -41,7 +41,6 @@ public interface DFSutils {
 
             //Cable must connect to the designated port of the block, so check if the current position is the start
             //position
-            //For launcher for now
             if(currentPos.equals(startPos)){
                 nextPos = getStartPos(startEntity);
                 Block block = level.getBlockState(nextPos).getBlock();

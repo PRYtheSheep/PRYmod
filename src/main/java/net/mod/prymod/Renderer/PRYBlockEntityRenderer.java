@@ -112,7 +112,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             Vec3 crossVector = facingVector.cross(angleVector);
 
             float angleBetween = angleBetween2Vectors(facingVector, angleVector);
-            if(angleBetween > 3){
+            if(angleBetween > 1){
                 //rotation needed
                 if(crossVector.y > 0){
                     entity.facing -= 0.1;
@@ -158,7 +158,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
         Vec3 crossVector = facingVector.cross(angleVector);
         float angleBetween = angleBetween2Vectors(facingVector, angleVector);
 
-        if(angleBetween > 4){
+        if(angleBetween > 1){
             //rotation needed
             entity.pointingAtTarget = false;
             if(crossVector.y > 0){

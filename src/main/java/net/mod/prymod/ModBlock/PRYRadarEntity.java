@@ -3,7 +3,9 @@ package net.mod.prymod.ModBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,16 +16,52 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.mod.prymod.Renderer.RGB;
 import net.mod.prymod.Renderer.TestRenderer;
 import net.mod.prymod.utils.DFSutils;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class PRYRadarEntity extends BlockEntity {
     public PRYRadarEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntityInit.PRYRADARENTITY.get(), pos, state);
     }
+
+    public static final String ENERGY_TAG = "energy_tag";
+
+    public static final int CAPACITY = 10000;
+    public static final int MAXRECEIVE = 1000;
+    public static final int MAXTRANSFER = 1;
+    public static final int POWER_DRAW = 1;
+
+    private final EnergyStorage energy = createEnergyStorage();
+    private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> new AdaptedEnergyStorage(energy) {
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+            setChanged();
+            return super.receiveEnergy(maxReceive, simulate);
+        }
+
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {return 0;}
+
+        @Override
+        public boolean canExtract() {return false;}
+
+        @Override
+        public boolean canReceive() {
+            return true;
+        }
+    });
 
     public LivingEntity radarTarget = null;
     public static LinkedHashMap<LivingEntity, RGB> livingEntityRGBHashMap = new LinkedHashMap<>();
@@ -52,6 +90,14 @@ public class PRYRadarEntity extends BlockEntity {
     public void tick(){
         if(this.level.isClientSide) return;
 
+        Predicate<Entity> predicate = (i) -> (i instanceof Player);
+        Player player1 = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 2, predicate);
+        if(player1 != null){
+            player1.displayClientMessage(Component.literal(" energy " + energy.getEnergyStored()), true);
+        }
+
+        energy.extractEnergy(POWER_DRAW, false);
+
         if(utils.isConnectedToBlockEntity(this, PRYGeneratorEntity.class) == null){
             livingEntityRGBHashMap.remove(radarTarget);
             radarTarget = null;
@@ -75,8 +121,11 @@ public class PRYRadarEntity extends BlockEntity {
         }
 
         if(radarTarget != null && !livingEntityRGBHashMap.containsKey(radarTarget)){
-            //livingEntityLinkedList.add(radarTarget);
             livingEntityRGBHashMap.put(radarTarget, new RGB(1, 1, 0));
+        }
+
+        if(energy.getEnergyStored() < POWER_DRAW) {
+            return;
         }
 
         AABB startEndBox = null;
@@ -123,11 +172,37 @@ public class PRYRadarEntity extends BlockEntity {
             for(Entity entity : list1){
                 if(entity instanceof Bat && ((Bat) entity).getHealth() != 0){
                     radarTarget = (LivingEntity) entity;
-                    //livingEntityLinkedList.add(radarTarget);
                     livingEntityRGBHashMap.put(radarTarget, new RGB(1, 1, 0));
                     break;
                 }
             }
         }
     }
+
+    @Override
+    protected void saveAdditional(CompoundTag nbt) {
+        super.saveAdditional(nbt);
+        nbt.put(ENERGY_TAG, energy.serializeNBT());
+    }
+
+    @Override
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
+        if(nbt.contains(ENERGY_TAG)) energy.deserializeNBT(nbt.get(ENERGY_TAG));
+    }
+
+    @NotNull
+    @Override
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+        if(cap == ForgeCapabilities.ENERGY){
+            return energyHandler.cast();
+        }
+        else {return super.getCapability(cap, side);}
+    }
+
+    @Nonnull
+    private EnergyStorage createEnergyStorage() {
+        return new EnergyStorage(CAPACITY, MAXRECEIVE, MAXTRANSFER);
+    }
+
 }

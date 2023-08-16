@@ -194,8 +194,8 @@ public class EventHandlingTest {
 
     @SubscribeEvent
     public void hurtEvent(LivingHurtEvent event){
-        if(event.getSource().getEntity() instanceof ProximityArrowEntity){
-
+        if(event.getSource().getEntity() instanceof ProximityArrowEntity arrowEntity){
+            arrowEntity.entityOwner.inflight = false;
         }
     }
 

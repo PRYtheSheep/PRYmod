@@ -1,5 +1,6 @@
 package net.mod.prymod.ModBlock;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,10 +22,12 @@ public class PRYGeneratorContainer extends AbstractContainerMenu {
         super(GUIRegister.PRYGENERATOR_CONTAINER.get(), windowId);
         this.pos = pos;
         if (player.level().getBlockEntity(pos) instanceof PRYGeneratorEntity generator) {
-            addSlot(new SlotItemHandler(generator.getItems(), INPUT_SLOT, 72, 33));
+            addSlot(new SlotItemHandler(generator.getItems(), INPUT_SLOT, 31, 54));
             addDataSlot(new DataSlot() {
                 @Override
-                public int get() {return generator.getStoredPower() & 0xffff;}
+                public int get() {
+                    return generator.getStoredPower() & 0xffff;
+                }
 
                 @Override
                 public void set(int pValue) {
@@ -41,7 +44,7 @@ public class PRYGeneratorContainer extends AbstractContainerMenu {
                 }
             });
         }
-        layoutPlayerInventorySlots(player.getInventory(), 8, 84);
+        layoutPlayerInventorySlots(player.getInventory(), 8, 82);
     }
 
     public int getPower() {

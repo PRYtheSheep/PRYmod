@@ -10,10 +10,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,6 +23,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -50,7 +54,8 @@ public class PRYGeneratorEntity extends BlockEntity {
     public static final int SLOT_COUNT = 0;
     public int burnTime = 0;
 
-    public PRYBlockEntity pryBlockEntity = null;
+    private PRYBlockEntity pryBlockEntity = null;
+    private PRYRadarEntity pryRadarEntity = null;
 
     public final ItemStackHandler inputItems = createItemHandler(INPUT_SLOT_COUNT);
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new CombinedInvWrapper(inputItems));
@@ -100,19 +105,24 @@ public class PRYGeneratorEntity extends BlockEntity {
     };
 
     public void tick(){
-        if(this.level.isClientSide) return;
+        if(this.level.isClientSide) {return;}
 
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
-        Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 5, predicate);
+        Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 2, predicate);
         if(player != null){
             player.displayClientMessage(Component.literal("generator burntime " + burnTime + " energy " + energy.getEnergyStored()), true);
         }
 
         BlockPos launcherPos = utils.isConnectedToBlockEntity(this, PRYBlockEntity.class);
         if(launcherPos != null) pryBlockEntity = (PRYBlockEntity) this.level.getBlockEntity(launcherPos);
+        else pryBlockEntity = null;
+        BlockPos radarPos = utils.isConnectedToBlockEntity(this, PRYRadarEntity.class);
+        if(radarPos != null) pryRadarEntity = (PRYRadarEntity) this.level.getBlockEntity(radarPos);
+        else pryRadarEntity = null;
 
         generateEnergy();
-        distributeEnergy();
+        distributeEnergy(pryBlockEntity);
+        distributeEnergy(pryRadarEntity);
     }
 
     public ItemStackHandler getItems() {
@@ -193,10 +203,10 @@ public class PRYGeneratorEntity extends BlockEntity {
         setChanged();
     }
 
-    public void distributeEnergy(){
-        if(energy.getEnergyStored() <= 0 || pryBlockEntity == null) return;
+    public void distributeEnergy(BlockEntity blockEntity){
+        if(energy.getEnergyStored() <= 0 || blockEntity == null) return;
 
-        pryBlockEntity.getCapability(ForgeCapabilities.ENERGY).map(e -> {
+        blockEntity.getCapability(ForgeCapabilities.ENERGY).map(e -> {
             if(e.canReceive()){
                 int received = e.receiveEnergy(Math.min(energy.getEnergyStored(), MAXTRANSFER), false);
                 energy.extractEnergy(received, false);

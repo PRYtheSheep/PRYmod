@@ -72,7 +72,7 @@ public class ProximityArrowEntity extends AbstractArrow {
 
     public void setTarget(LivingEntity target) { this.target = target; }
 
-    PRYBlockEntity entityOwner = null;
+    public PRYBlockEntity entityOwner = null;
     int progress = 0;
     public Entity target = null;
     public Vec3 previousPosition = null;
@@ -156,7 +156,6 @@ public class ProximityArrowEntity extends AbstractArrow {
                     player.displayClientMessage(Component.literal("§cMissile detonated"), true);
                 }
             }
-
             if(progress > 200){
                 this.kill();
                 entityOwner.inflight = false;

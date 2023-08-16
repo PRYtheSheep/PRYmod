@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -16,6 +17,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -46,14 +48,12 @@ public class PRYBlockEntity extends BlockEntity {
 
     public static final int CAPACITY = 10000;
     public static final int MAXRECEIVE = 1000;
-    public static final int MAXTRANSFER = 0;
+    public static final int MAXTRANSFER = 1000;
     public static final int POWER_DRAW = 1000;
 
     public static final int INPUT_SLOT = 0;
     public static final int INPUT_SLOT_COUNT = 1;
     public static final int SLOT_COUNT = 0;
-
-    //test
     public int numberOfMissiles = 0;
 
     int progress = 0;
@@ -138,7 +138,7 @@ public class PRYBlockEntity extends BlockEntity {
         else return;
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
 
-        Player player1 = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 5, predicate);
+        Player player1 = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 2, predicate);
         if(player1 != null){
             player1.displayClientMessage(Component.literal(" energy " + energy.getEnergyStored()), true);
         }
@@ -172,7 +172,7 @@ public class PRYBlockEntity extends BlockEntity {
                 Vec3 resultantVector = new Vec3((target.getX() - this.getBlockPos().getX()),
                         1,
                         (target.getZ() - this.getBlockPos().getZ()));
-                if(!inflight && numberOfMissiles > 0){
+                if(!inflight && numberOfMissiles > 0 && energy.getEnergyStored() >= POWER_DRAW){
                     proxyArrow.setDeltaMovement(resultantVector);
                     if(proxyArrow.getDeltaMovement().length() > 1){
                         proxyArrow.setDeltaMovement(proxyArrow.getDeltaMovement().multiply(
@@ -190,6 +190,7 @@ public class PRYBlockEntity extends BlockEntity {
                     }
                     numberOfMissiles--;
                     inputItems.extractItem(INPUT_SLOT, 1, false);
+                    energy.extractEnergy(POWER_DRAW, false);
                 }
             }
         }

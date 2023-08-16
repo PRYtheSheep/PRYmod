@@ -55,7 +55,7 @@ public class PRYGenerator extends Block implements EntityBlock {
                 MenuProvider containerProvider = new MenuProvider() {
                     @Override
                     public Component getDisplayName() {
-                        return Component.translatable("PRYGenerator");
+                        return Component.translatable("");
                     }
 
                     @Override
