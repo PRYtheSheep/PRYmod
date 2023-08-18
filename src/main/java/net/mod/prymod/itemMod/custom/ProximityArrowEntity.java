@@ -124,21 +124,11 @@ public class ProximityArrowEntity extends AbstractArrow {
 
         if(target != null){
 
-
             Vec3 currentVector = new Vec3(this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
 
             Double angle = Math.acos(resultantVector.dot(currentVector) / (resultantVector.length() * currentVector.length())) * (180/Math.PI);
 
             this.setDeltaMovement(this.getDeltaMovement().add(resultantVector));
-
-
-            if(this.getDeltaMovement().length() > 1){
-                this.setDeltaMovement(this.getDeltaMovement().multiply(
-                        1/this.getDeltaMovement().length(),
-                        1/this.getDeltaMovement().length(),
-                        1/this.getDeltaMovement().length()
-                ));
-            }
 
             if(resultantVector.length() <= 2 && !this.level().isClientSide && entityOwner != null){
                 this.level().explode(
@@ -193,52 +183,7 @@ public class ProximityArrowEntity extends AbstractArrow {
 
             progress++;
         }
-
-
-        /*if(blockHit){
-            progress++;
-            if(progress>=30){
-                AABB startEndBox = this.getBoundingBox().inflate(10);
-                List<Entity> list1 = this.level.getEntities(this, startEndBox);
-                for(Entity entity : list1){
-                    if(entity instanceof LivingEntity){
-                        ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffect.byId(24), 100));
-                    }
-                }
-                this.kill();
-                progress = 0;
-            }
-        }
-
-        /*progress++;
-
-        if(progress>2){
-            AABB startEndBox = this.getBoundingBox().inflate(3);
-            List<Entity> list1 = this.level.getEntities(this, startEndBox);
-
-            if(list1.isEmpty()) return;
-
-            for(Entity entity : list1){
-                if(entity.equals(this) || !(entity instanceof LivingEntity)){
-                    continue;
-                }
-                Double distance = Math.sqrt( Math.pow(this.getX()-entity.getX(), 2) + Math.pow(this.getY()-entity.getY(), 2) + Math.pow(this.getZ()-entity.getZ(), 2) );
-                ((Player)this.getOwner()).displayClientMessage(Component.literal(String.valueOf("distance is " + distance)), false);
-                if(distance < 3){
-                    this.getLevel().explode(null,
-                            this.getX(),
-                            this.getY(),
-                            this.getZ(),
-                            4F,
-                            Level.ExplosionInteraction.TNT);
-                    this.kill();
-                    progress = 0;
-                    return;
-                }
-            }
-        }*/
     }
-
 
     public boolean isFoil() {
         return false;

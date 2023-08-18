@@ -185,8 +185,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
         stack.popPose();
     }
 
-    private Vec3 getVectorForRotation(float pitch, float yaw)
-    {
+    private Vec3 getVectorForRotation(float pitch, float yaw) {
         float f = (float) Math.cos(-yaw * 0.017453292F - (float)Math.PI);
         float f1 = (float) Math.sin(-yaw * 0.017453292F - (float)Math.PI);
         float f2 = (float) -Math.cos(-pitch * 0.017453292F);
@@ -194,7 +193,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
         return new Vec3(f1 * f2 * -1, f3, f * f2 * -1);
     }
     
-    private float angleBetween2Vectors(Vec3 v1, Vec3 v2){
+    private float angleBetween2Vectors(Vec3 v1, Vec3 v2) {
         return (float) (Math.acos(v1.dot(v2) / (v1.length() * v2.length())) * (180 / Math.PI));
     }
 }
