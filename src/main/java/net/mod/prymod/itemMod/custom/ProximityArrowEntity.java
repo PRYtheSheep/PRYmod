@@ -1,7 +1,5 @@
 package net.mod.prymod.itemMod.custom;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -109,26 +107,14 @@ public class ProximityArrowEntity extends AbstractArrow {
         if(!this.level().isClientSide() && target != null && progress <= 1){
             this.level().playSound(this, this.blockPosition(), SoundEvents.FIREWORK_ROCKET_LAUNCH, SoundSource.NEUTRAL, 10f, 10f);
 
-            this.setDeltaMovement(resultantVector);
-
-            if(this.getDeltaMovement().length() > 1){
-                this.setDeltaMovement(this.getDeltaMovement().multiply(
-                        1/this.getDeltaMovement().length(),
-                        1/this.getDeltaMovement().length(),
-                        1/this.getDeltaMovement().length()
-                ));
-            }
+            this.setDeltaMovement(this.getDeltaMovement().normalize());
             progress++;
             return;
         }
 
         if(target != null){
 
-            Vec3 currentVector = new Vec3(this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
-
-            Double angle = Math.acos(resultantVector.dot(currentVector) / (resultantVector.length() * currentVector.length())) * (180/Math.PI);
-
-            this.setDeltaMovement(this.getDeltaMovement().add(resultantVector));
+            this.setDeltaMovement(this.getDeltaMovement().add(resultantVector.normalize().scale(0.8)).normalize());
 
             if(resultantVector.length() <= 2 && !this.level().isClientSide && entityOwner != null){
                 this.level().explode(
@@ -187,5 +173,13 @@ public class ProximityArrowEntity extends AbstractArrow {
 
     public boolean isFoil() {
         return false;
+    }
+
+    private Vec3 getVectorForRotation(float pitch, float yaw) {
+        float f = (float) Math.cos(-yaw * 0.017453292F - (float)Math.PI);
+        float f1 = (float) Math.sin(-yaw * 0.017453292F - (float)Math.PI);
+        float f2 = (float) -Math.cos(-pitch * 0.017453292F);
+        float f3 = (float) Math.sin(-pitch * 0.017453292F);
+        return new Vec3(f1 * f2 * -1, f3, f * f2);
     }
 }
