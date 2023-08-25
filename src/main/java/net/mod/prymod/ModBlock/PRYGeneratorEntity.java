@@ -195,7 +195,7 @@ public class PRYGeneratorEntity extends BlockEntity {
         }
 
         ItemStack itemStack = inputItems.getStackInSlot(INPUT_SLOT);
-        if(!itemStack.isEmpty() && itemStack.is(Items.COAL)){
+        if(!itemStack.isEmpty() && itemStack.is(Items.COAL_BLOCK)){
             int additionalBurnTime = ForgeHooks.getBurnTime(itemStack, RecipeType.SMELTING);
             burnTime += additionalBurnTime;
             inputItems.extractItem(INPUT_SLOT, 1, false);
