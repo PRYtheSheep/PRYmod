@@ -47,6 +47,13 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
     public void render(PRYBlockEntity entity, float partialTick, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         final BlockRenderDispatcher blockRenderDispatcher = this.context.getBlockRenderDispatcher();
 
+        //BlockState
+        BlockState state = null;
+
+        if(entity.numberOfMissiles == 0) state = ModBlock.PRYLAUNCHER_0.get().defaultBlockState();
+        else state = ModBlock.PRYLAUNCHER_6.get().defaultBlockState();
+        //BlockState
+
         LivingEntity target = null;
         AABB startEndBox = new AABB(
                 Minecraft.getInstance().player.getX()-90,
@@ -134,7 +141,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             }
 
             //stack.rotateAround(Axis.YN.rotationDegrees(facing), 0.5F, 0, 0.5F);
-            blockRenderDispatcher.renderSingleBlock(ModBlock.PRYLAUNCHER.get().defaultBlockState(), stack, buffer, packedLight, packedOverlay);
+            blockRenderDispatcher.renderSingleBlock(state, stack, buffer, packedLight, packedOverlay);
             stack.pushPose();
             stack.popPose();
             return;
@@ -180,7 +187,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), 0.5F, 0, 0.5F);
         }
 
-        blockRenderDispatcher.renderSingleBlock(ModBlock.PRYLAUNCHER.get().defaultBlockState(), stack, buffer, packedLight, packedOverlay);
+        blockRenderDispatcher.renderSingleBlock(state, stack, buffer, packedLight, packedOverlay);
         stack.pushPose();
         stack.popPose();
     }

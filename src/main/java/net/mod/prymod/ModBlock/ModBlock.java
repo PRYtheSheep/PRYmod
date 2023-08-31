@@ -198,8 +198,16 @@ public class ModBlock {
                     .noOcclusion()
             ));
 
-    public static final RegistryObject<PRYLauncher> PRYLAUNCHER = registerBlock("prylauncher", () ->
-            new PRYLauncher(BlockBehaviour
+    public static final RegistryObject<PRYLauncher_6> PRYLAUNCHER_0 = registerBlock("prylauncher_0", () ->
+            new PRYLauncher_6(BlockBehaviour
+                    .Properties.copy(Blocks.IRON_BLOCK)
+                    .strength(1f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            ));
+
+    public static final RegistryObject<PRYLauncher_6> PRYLAUNCHER_6 = registerBlock("prylauncher_6", () ->
+            new PRYLauncher_6(BlockBehaviour
                     .Properties.copy(Blocks.IRON_BLOCK)
                     .strength(1f)
                     .requiresCorrectToolForDrops()

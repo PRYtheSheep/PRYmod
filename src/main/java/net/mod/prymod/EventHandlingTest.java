@@ -201,7 +201,8 @@ public class EventHandlingTest {
 
     @SubscribeEvent
     public void registerAdditional(ModelEvent.RegisterAdditional event){
-        event.register(new ResourceLocation(PRYmod.MODID, "textures/block/prylauncher.png"));
+        event.register(new ResourceLocation(PRYmod.MODID, "textures/block/prylauncher_0.png"));
+        event.register(new ResourceLocation(PRYmod.MODID, "textures/block/prylauncher_6.png"));
     }
 
     @SubscribeEvent
