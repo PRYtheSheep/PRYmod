@@ -17,6 +17,7 @@ public class PRYGeneratorContainer extends AbstractContainerMenu {
 
     private final BlockPos pos;
     private int power;
+    private String name;
 
     public PRYGeneratorContainer(int windowId, Player player, BlockPos pos) {
         super(GUIRegister.PRYGENERATOR_CONTAINER.get(), windowId);

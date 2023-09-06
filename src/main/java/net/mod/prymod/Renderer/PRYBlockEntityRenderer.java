@@ -47,12 +47,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
     public void render(PRYBlockEntity entity, float partialTick, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         final BlockRenderDispatcher blockRenderDispatcher = this.context.getBlockRenderDispatcher();
 
-        //BlockState
-        BlockState state = null;
-
-        if(entity.numberOfMissiles == 0) state = ModBlock.PRYLAUNCHER_0.get().defaultBlockState();
-        else state = ModBlock.PRYLAUNCHER_6.get().defaultBlockState();
-        //BlockState
+        BlockState state = getBlockState(entity);
 
         LivingEntity target = null;
         AABB startEndBox = new AABB(
@@ -202,5 +197,16 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
     
     private float angleBetween2Vectors(Vec3 v1, Vec3 v2) {
         return (float) (Math.acos(v1.dot(v2) / (v1.length() * v2.length())) * (180 / Math.PI));
+    }
+
+    private BlockState getBlockState(PRYBlockEntity entity){
+        int num = entity.numberOfMissiles;
+        if(num == 0) return ModBlock.PRYLAUNCHER_0.get().defaultBlockState();
+        else if(num >= 1 && num <= 10) return ModBlock.PRYLAUNCHER_1.get().defaultBlockState();
+        else if(num >= 11 && num <= 20) return ModBlock.PRYLAUNCHER_2.get().defaultBlockState();
+        else if(num >= 21 && num <= 30) return ModBlock.PRYLAUNCHER_3.get().defaultBlockState();
+        else if(num >= 31 && num <= 40) return ModBlock.PRYLAUNCHER_4.get().defaultBlockState();
+        else if(num >= 41 && num <= 50) return ModBlock.PRYLAUNCHER_5.get().defaultBlockState();
+        else return ModBlock.PRYLAUNCHER_6.get().defaultBlockState();
     }
 }

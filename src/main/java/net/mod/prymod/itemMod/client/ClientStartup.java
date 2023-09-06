@@ -10,6 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.mod.prymod.ModBlock.ModBlockEntityInit;
+import net.mod.prymod.ModBlock.PRYRadarContainer;
 import net.mod.prymod.PRYmod;
 import net.mod.prymod.Renderer.PRYBlockEntityRenderer;
 import net.mod.prymod.Renderer.ProximityArrowRenderer;
@@ -24,6 +25,7 @@ public class ClientStartup {
             event.enqueueWork(() -> {
                 MenuScreens.register(GUIRegister.PRYBLOCK_CONTAINER.get(), PRYBlockScreen::new);
                 MenuScreens.register(GUIRegister.PRYGENERATOR_CONTAINER.get(), PRYGeneratorScreen::new);
+                MenuScreens.register(GUIRegister.PRYRADAR_CONTAINER.get(), PRYRadarScreen::new);
             });
         }
 

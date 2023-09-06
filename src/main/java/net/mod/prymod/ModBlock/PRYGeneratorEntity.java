@@ -104,9 +104,10 @@ public class PRYGeneratorEntity extends BlockEntity {
         }
     };
 
+    public String name = "Test message";
+
     public void tick(){
         if(this.level.isClientSide) {return;}
-
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
         Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 2, predicate);
         if(player != null){

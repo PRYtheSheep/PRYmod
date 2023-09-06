@@ -206,6 +206,46 @@ public class ModBlock {
                     .noOcclusion()
             ));
 
+    public static final RegistryObject<PRYLauncher_6> PRYLAUNCHER_1 = registerBlock("prylauncher_1", () ->
+            new PRYLauncher_6(BlockBehaviour
+                    .Properties.copy(Blocks.IRON_BLOCK)
+                    .strength(1f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            ));
+
+    public static final RegistryObject<PRYLauncher_6> PRYLAUNCHER_2 = registerBlock("prylauncher_2", () ->
+            new PRYLauncher_6(BlockBehaviour
+                    .Properties.copy(Blocks.IRON_BLOCK)
+                    .strength(1f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            ));
+
+    public static final RegistryObject<PRYLauncher_6> PRYLAUNCHER_3 = registerBlock("prylauncher_3", () ->
+            new PRYLauncher_6(BlockBehaviour
+                    .Properties.copy(Blocks.IRON_BLOCK)
+                    .strength(1f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            ));
+
+    public static final RegistryObject<PRYLauncher_6> PRYLAUNCHER_4 = registerBlock("prylauncher_4", () ->
+            new PRYLauncher_6(BlockBehaviour
+                    .Properties.copy(Blocks.IRON_BLOCK)
+                    .strength(1f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            ));
+
+    public static final RegistryObject<PRYLauncher_6> PRYLAUNCHER_5 = registerBlock("prylauncher_5", () ->
+            new PRYLauncher_6(BlockBehaviour
+                    .Properties.copy(Blocks.IRON_BLOCK)
+                    .strength(1f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            ));
+
     public static final RegistryObject<PRYLauncher_6> PRYLAUNCHER_6 = registerBlock("prylauncher_6", () ->
             new PRYLauncher_6(BlockBehaviour
                     .Properties.copy(Blocks.IRON_BLOCK)

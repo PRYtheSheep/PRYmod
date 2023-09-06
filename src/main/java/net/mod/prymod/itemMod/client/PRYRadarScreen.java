@@ -1,26 +1,24 @@
 package net.mod.prymod.itemMod.client;
 
-import net.minecraft.client.Minecraft;
+import com.sun.jna.platform.win32.OaIdl;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.StonecutterScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.mod.prymod.ModBlock.PRYBlockContainer;
 import net.mod.prymod.ModBlock.PRYBlockEntity;
-import net.mod.prymod.ModBlock.PRYGeneratorContainer;
+import net.mod.prymod.ModBlock.PRYRadarContainer;
 import net.mod.prymod.PRYmod;
 
-public class PRYGeneratorScreen extends AbstractContainerScreen<PRYGeneratorContainer> {
+public class PRYRadarScreen extends AbstractContainerScreen<PRYRadarContainer> {
 
     private static final int ENERGY_LEFT = 163;
     private static final int ENERGY_WIDTH = 4;
     private static final int ENERGY_TOP = 10;
     private static final int ENERGY_HEIGHT = 60;
-    private final ResourceLocation GUI = new ResourceLocation(PRYmod.MODID, "textures/gui/prygeneratorgui.png");
+    private final ResourceLocation GUI = new ResourceLocation(PRYmod.MODID, "textures/gui/pryradargui.png");
 
-    public PRYGeneratorScreen(PRYGeneratorContainer container, Inventory inventory, Component title) {
+    public PRYRadarScreen(PRYRadarContainer container, Inventory inventory, Component title) {
         super(container, inventory, title);
         this.inventoryLabelY = -999;
     }
@@ -36,6 +34,7 @@ public class PRYGeneratorScreen extends AbstractContainerScreen<PRYGeneratorCont
     @Override
     public void render(GuiGraphics graphics, int mousex, int mousey, float partialTick) {
         super.render(graphics, mousex, mousey, partialTick);
+        System.out.println(menu.getName());
         // Render tooltip with power if in the energy box
         if (mousex >= leftPos + ENERGY_LEFT && mousex < leftPos + ENERGY_LEFT + ENERGY_WIDTH && mousey >= topPos + ENERGY_TOP && mousey < topPos + ENERGY_TOP + ENERGY_HEIGHT) {
             int power = menu.getPower();

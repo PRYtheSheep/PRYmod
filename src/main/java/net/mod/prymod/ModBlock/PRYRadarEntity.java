@@ -1,28 +1,23 @@
 package net.mod.prymod.ModBlock;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.mod.prymod.Renderer.RGB;
-import net.mod.prymod.Renderer.TestRenderer;
 import net.mod.prymod.utils.DFSutils;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +84,8 @@ public class PRYRadarEntity extends BlockEntity {
 
     public void tick(){
         if(this.level.isClientSide) return;
-
+        //TEST
+        //TEST
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
         Player player1 = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 2, predicate);
         if(player1 != null){
@@ -177,6 +173,10 @@ public class PRYRadarEntity extends BlockEntity {
                 }
             }
         }
+    }
+
+    public int getStoredPower() {
+        return energy.getEnergyStored();
     }
 
     @Override
