@@ -10,19 +10,19 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.network.PacketDistributor;
 import net.mod.prymod.itemMod.client.GUIRegister;
+import net.mod.prymod.itemMod.networking.ModMessages;
+import net.mod.prymod.itemMod.networking.packets.PRYRadarEntityS2C;
 
 public class PRYRadarContainer extends AbstractContainerMenu {
 
     private final BlockPos pos;
     private int power;
-    private String name;
 
     public PRYRadarContainer(int windowId, Player player, FriendlyByteBuf extraData) {
         //client side shenanigans
         super(GUIRegister.PRYRADAR_CONTAINER.get(), windowId);
-        this.name = extraData.readUtf();
         this.pos = extraData.readBlockPos();
         if (player.level().getBlockEntity(pos) instanceof PRYRadarEntity radar) {
             addDataSlot(new DataSlot() {
@@ -79,7 +79,7 @@ public class PRYRadarContainer extends AbstractContainerMenu {
     }
 
     public int getPower() {return power;}
-    public String getName() {return name;}
+    public BlockPos getPos() {return pos;}
 
     private int addSlotRange(Container playerInventory, int index, int x, int y, int amount, int dx) {
         for (int i = 0 ; i < amount ; i++) {

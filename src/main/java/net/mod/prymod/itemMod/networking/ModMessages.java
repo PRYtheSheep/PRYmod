@@ -9,6 +9,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import net.mod.prymod.PRYmod;
 import net.mod.prymod.itemMod.networking.packets.PRYBlockEntityS2C;
 import net.mod.prymod.itemMod.networking.packets.PRYBlockRendererC2SPacket;
+import net.mod.prymod.itemMod.networking.packets.PRYRadarEntityS2C;
 import net.mod.prymod.itemMod.networking.packets.RequestPacketC2S;
 
 public class ModMessages {
@@ -46,6 +47,11 @@ public class ModMessages {
                 .consumerMainThread(PRYBlockEntityS2C::handle)
                 .add();
 
+        net.messageBuilder(PRYRadarEntityS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(PRYRadarEntityS2C::new)
+                .encoder(PRYRadarEntityS2C::toBytes)
+                .consumerMainThread(PRYRadarEntityS2C::handle)
+                .add();
     }
 
     public static <MSG> void sendToServer(MSG message){

@@ -17,7 +17,10 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.network.PacketDistributor;
 import net.mod.prymod.Renderer.RGB;
+import net.mod.prymod.itemMod.networking.ModMessages;
+import net.mod.prymod.itemMod.networking.packets.PRYRadarEntityS2C;
 import net.mod.prymod.utils.DFSutils;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,6 +62,11 @@ public class PRYRadarEntity extends BlockEntity {
     });
 
     public LivingEntity radarTarget = null;
+    public String entityName = null;
+    public BlockPos entityPos = null;
+    public Boolean trackedByLauncher = false;
+    int progress = -1;
+
     public static LinkedHashMap<LivingEntity, RGB> livingEntityRGBHashMap = new LinkedHashMap<>();
     private final DFSutils utils = new DFSutils() {
         @Override
@@ -83,43 +91,96 @@ public class PRYRadarEntity extends BlockEntity {
     };
 
     public void tick(){
+        //Increments progress counter each tick
+        progress++;
+
+        //Sends a packet to update data on client side every 40 ticks, packet is sent from server to client
+        if(progress % 40 == 0) {
+            if(radarTarget != null && radarTarget.getHealth() != 0){
+                entityName = radarTarget.getDisplayName().getString();
+                entityPos = radarTarget.getOnPos();
+                //Checks if the target's RGB value in hashmap is cyan(1, 1, 0)
+                //If cyan, sets trackedByLauncher to true, else set to false
+                RGB rgb = livingEntityRGBHashMap.get(radarTarget);
+                if(rgb.equals(new RGB(0, 1, 1))) trackedByLauncher = true;
+                else trackedByLauncher = false;
+            }
+            else{
+                //Name if target is null
+                entityName = "null";
+                //Block pos if the target is null
+                entityPos = new BlockPos(0, -400, 0);
+
+                trackedByLauncher = false;
+            }
+            System.out.println("trackedByLauncher is " + trackedByLauncher);
+            ModMessages.INSTANCE.send(PacketDistributor.ALL.noArg(), new PRYRadarEntityS2C(this.getBlockPos(), entityPos, entityName, trackedByLauncher));
+        }
+
+        //Returns if on client side, all game logic is to run on server side only
         if(this.level.isClientSide) return;
+
         //TEST
-        //TEST
+        if(radarTarget != null){
+            //System.out.println(radarTarget.getDisplayName().getString());
+        }
+
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
         Player player1 = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 2, predicate);
         if(player1 != null){
             player1.displayClientMessage(Component.literal(" energy " + energy.getEnergyStored()), true);
         }
+        //TEST
 
+        //Removes energy from storage each tick
         energy.extractEnergy(POWER_DRAW, false);
 
+        //Checks if this block is connected to generator, returns if not connected
+        //Sets all data to null and removes currently tracked target from the hashmap
         if(utils.isConnectedToBlockEntity(this, PRYGeneratorEntity.class) == null){
             livingEntityRGBHashMap.remove(radarTarget);
             radarTarget = null;
+            entityPos = null;
+            entityName = null;
+            trackedByLauncher = false;
             return;
         }
 
+        //Checks if this block is connected to a launcher(PRYBlock)
+        //If not connected, changes the colour of tracking box to yellow
         if(utils.isConnectedToBlockEntity(this, PRYBlockEntity.class) == null && radarTarget != null){
             livingEntityRGBHashMap.put(radarTarget, new RGB(1, 1, 0));
         }
 
+        //Checks if the currently tracked target is dead
+        //If dead, it is removed from the hashmap and all data is set to null
         if(radarTarget != null && radarTarget.getHealth() == 0) {
             livingEntityRGBHashMap.remove(radarTarget);
             radarTarget = null;
+            entityPos = null;
+            entityName = null;
+            trackedByLauncher = false;
         }
 
+        //Checks if the closest player is within 128 blocks
+        //If distance exceeds 128 blocks, currently tracked target is removed from hashmap and all data set to null
         if(Minecraft.getInstance().player != null && radarTarget != null){
             if(radarTarget.distanceTo(Minecraft.getInstance().player) > 128) {
                 livingEntityRGBHashMap.remove(radarTarget);
                 radarTarget = null;
+                entityPos = null;
+                entityName = null;
+                trackedByLauncher = false;
             }
         }
 
+        //If currently tracked target is not on hashmap, put it into the hashmap with colour of tracking box as yellow
         if(radarTarget != null && !livingEntityRGBHashMap.containsKey(radarTarget)){
             livingEntityRGBHashMap.put(radarTarget, new RGB(1, 1, 0));
         }
 
+        //Checks if remaining energy is less than energy draw per tick
+        //If is less, returns
         if(energy.getEnergyStored() < POWER_DRAW) {
             return;
         }

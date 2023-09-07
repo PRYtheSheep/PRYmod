@@ -72,7 +72,7 @@ public class PRYRadar extends Block implements EntityBlock {
                     }
                 };
                 NetworkHooks.openScreen((ServerPlayer) player, containerProvider, friendlyByteBuf -> {
-                    friendlyByteBuf.writeUtf("test");
+                    //only syncs data when opening screen
                     friendlyByteBuf.writeBlockPos(pos);
                 });
             } else {

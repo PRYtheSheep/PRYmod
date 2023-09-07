@@ -164,12 +164,12 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             //rotation needed
             entity.pointingAtTarget = false;
             if(crossVector.y > 0){
-                entity.facing -= 0.1;
+                entity.facing -= 0.2;
                 stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), 0.5F, 0, 0.5F);
                 if(entity.facing < 0) entity.facing = 359;
             }
             else{
-                entity.facing += 0.1;
+                entity.facing += 0.2;
                 stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), 0.5F, 0, 0.5F);
                 if(entity.facing > 360) entity.facing = 1;
             }

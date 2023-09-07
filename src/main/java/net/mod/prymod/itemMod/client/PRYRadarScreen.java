@@ -1,6 +1,7 @@
 package net.mod.prymod.itemMod.client;
 
 import com.sun.jna.platform.win32.OaIdl;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -8,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.mod.prymod.ModBlock.PRYBlockEntity;
 import net.mod.prymod.ModBlock.PRYRadarContainer;
+import net.mod.prymod.ModBlock.PRYRadarEntity;
 import net.mod.prymod.PRYmod;
 
 public class PRYRadarScreen extends AbstractContainerScreen<PRYRadarContainer> {
@@ -34,11 +36,15 @@ public class PRYRadarScreen extends AbstractContainerScreen<PRYRadarContainer> {
     @Override
     public void render(GuiGraphics graphics, int mousex, int mousey, float partialTick) {
         super.render(graphics, mousex, mousey, partialTick);
-        System.out.println(menu.getName());
         // Render tooltip with power if in the energy box
         if (mousex >= leftPos + ENERGY_LEFT && mousex < leftPos + ENERGY_LEFT + ENERGY_WIDTH && mousey >= topPos + ENERGY_TOP && mousey < topPos + ENERGY_TOP + ENERGY_HEIGHT) {
             int power = menu.getPower();
             graphics.renderTooltip(this.font, Component.literal(power + " RF"), mousex, mousey);
+        }
+        PRYRadarEntity radarEntity = (PRYRadarEntity) Minecraft.getInstance().level.getBlockEntity(menu.getPos());
+        if(radarEntity != null){
+            if(!radarEntity.entityName.equals("null")) System.out.println("Name: " + radarEntity.entityName + " Pos: " + radarEntity.entityPos + " TrackedByLauncher: " + radarEntity.trackedByLauncher);
+            else System.out.println("no target");
         }
     }
 
