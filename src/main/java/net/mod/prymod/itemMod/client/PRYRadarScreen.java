@@ -1,9 +1,9 @@
 package net.mod.prymod.itemMod.client;
 
-import com.sun.jna.platform.win32.OaIdl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -41,10 +41,27 @@ public class PRYRadarScreen extends AbstractContainerScreen<PRYRadarContainer> {
             int power = menu.getPower();
             graphics.renderTooltip(this.font, Component.literal(power + " RF"), mousex, mousey);
         }
+
+        //Display static text on GUI
+        graphics.drawString(this.font, "Entity:", leftPos + 10, topPos + 11, 0xff00ff00);
+        graphics.drawString(this.font, "Coor:", leftPos + 10, topPos + 20, 0xff00ff00);
+
         PRYRadarEntity radarEntity = (PRYRadarEntity) Minecraft.getInstance().level.getBlockEntity(menu.getPos());
         if(radarEntity != null){
-            if(!radarEntity.entityName.equals("null")) System.out.println("Name: " + radarEntity.entityName + " Pos: " + radarEntity.entityPos + " TrackedByLauncher: " + radarEntity.trackedByLauncher);
-            else System.out.println("no target");
+            if(!radarEntity.entityName.equals("null")) {
+                //Radar is tracking some entity
+                //Name
+                graphics.drawString(this.font, radarEntity.entityName, leftPos + 41, topPos + 11, 0xff00ff00);
+
+                //Pos
+                BlockPos pos = radarEntity.entityPos;
+                String posString = pos.getX() + " " + pos.getY() + " " + pos.getZ();
+                graphics.drawString(this.font, posString, leftPos + 37, topPos + 20, 0xff00ff00);
+            }
+            else{
+                graphics.drawString(this.font, "Null", leftPos + 41, topPos + 11, 0xff00ff00);
+                graphics.drawString(this.font, "Null", leftPos + 37, topPos + 20, 0xff00ff00);
+            }
         }
     }
 

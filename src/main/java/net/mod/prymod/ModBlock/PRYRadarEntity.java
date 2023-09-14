@@ -95,7 +95,7 @@ public class PRYRadarEntity extends BlockEntity {
         progress++;
 
         //Sends a packet to update data on client side every 40 ticks, packet is sent from server to client
-        if(progress % 40 == 0) {
+        if(progress % 20 == 0) {
             if(radarTarget != null && radarTarget.getHealth() != 0){
                 entityName = radarTarget.getDisplayName().getString();
                 entityPos = radarTarget.getOnPos();
@@ -113,7 +113,6 @@ public class PRYRadarEntity extends BlockEntity {
 
                 trackedByLauncher = false;
             }
-            System.out.println("trackedByLauncher is " + trackedByLauncher);
             ModMessages.INSTANCE.send(PacketDistributor.ALL.noArg(), new PRYRadarEntityS2C(this.getBlockPos(), entityPos, entityName, trackedByLauncher));
         }
 
