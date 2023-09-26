@@ -59,15 +59,13 @@ public class PRYGeneratorEntity extends BlockEntity {
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new CombinedInvWrapper(inputItems));
     private final LazyOptional<IItemHandler> inputItemHandler = LazyOptional.of(() -> new AdaptedItemHandler(inputItems) {
         @Override
-        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return ItemStack.EMPTY;
-        }
+        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {return ItemStack.EMPTY;}
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return switch(slot){
-                case 0 -> stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
-                case 1 -> stack.getItem() == Items.COAL_BLOCK;
+                case 0 -> stack.equals(new ItemStack(Items.COAL_BLOCK), false);
+                case 1 -> stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
                 default -> super.isItemValid(slot, stack);
             };
         }
@@ -135,7 +133,7 @@ public class PRYGeneratorEntity extends BlockEntity {
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
         Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 2, predicate);
         if(player != null){
-            player.displayClientMessage(Component.literal("generator burntime " + burnTime + " energy " + energy.getEnergyStored()), true);
+            player.displayClientMessage(Component.literal("generator burntime " + burnTime + " energy " + energy.getEnergyStored() + " fluid " + FLUID_TANK.getFluidAmount()), true);
         }
 
         BlockPos launcherPos = utils.isConnectedToBlockEntity(this, PRYBlockEntity.class);
@@ -145,17 +143,35 @@ public class PRYGeneratorEntity extends BlockEntity {
         if(radarPos != null) pryRadarEntity = (PRYRadarEntity) this.level.getBlockEntity(radarPos);
         else pryRadarEntity = null;
 
+        if(hasFluidItemInSlot()){
+            transferFluidFromItemIntoTank();
+        }
         generateEnergy();
         distributeEnergy(pryBlockEntity);
         distributeEnergy(pryRadarEntity);
+    }
 
-        //TEST
-        ItemStack testStack = inputItems.getStackInSlot(FLUID_INPUT_SLOT);
-        if(testStack.is(Items.WATER_BUCKET)){
-            inputItems.extractItem(FLUID_INPUT_SLOT, 1, false);
-            inputItems.insertItem(FLUID_INPUT_SLOT, new ItemStack(Items.BUCKET), false);
-        }
-        //TEST
+    private void transferFluidFromItemIntoTank() {
+        this.inputItems.getStackInSlot(FLUID_INPUT_SLOT).getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).ifPresent(handler ->{
+            int drainAmount = Math.min(this.FLUID_TANK.getSpace(), 1000);
+            FluidStack stack = handler.drain(drainAmount, IFluidHandler.FluidAction.SIMULATE);
+            if(this.FLUID_TANK.isFluidValid(stack)){
+                //fluid in tank is valid (water)
+                stack = handler.drain(drainAmount, IFluidHandler.FluidAction.EXECUTE);
+                fillTankWithFluid(stack, handler.getContainer());
+            }
+        });
+    }
+
+    private void fillTankWithFluid(FluidStack stack, ItemStack container) {
+        this.FLUID_TANK.fill(stack, IFluidHandler.FluidAction.EXECUTE);
+        this.inputItems.extractItem(FLUID_INPUT_SLOT, 1, false);
+        this.inputItems.insertItem(FLUID_INPUT_SLOT, container, false);
+    }
+
+    private boolean hasFluidItemInSlot() {
+        ItemStack itemStack = this.inputItems.getStackInSlot(FLUID_INPUT_SLOT);
+        return itemStack.getCount() > 0;
     }
 
     public ItemStackHandler getItems() {
