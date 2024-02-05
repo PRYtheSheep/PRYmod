@@ -114,9 +114,56 @@ public class ProximityArrowEntity extends AbstractArrow {
 
         if(target != null){
 
-            this.setDeltaMovement(this.getDeltaMovement().add(resultantVector.normalize().scale(0.8)).normalize());
+            //this.setDeltaMovement(this.getDeltaMovement().add(resultantVector.normalize().scale(0.8)).normalize());
 
-            if(resultantVector.length() <= 2 && !this.level().isClientSide && entityOwner != null){
+            //TEST
+            Vec3 currentVelocity = this.getDeltaMovement();
+            Vec3 crossVector = resultantVector.cross(currentVelocity);
+
+            double currentDeltaZ = currentVelocity.z;
+            double currentDeltaY = currentVelocity.y;
+            double currentDeltaX = currentVelocity.x;
+
+            double currentDistance = Math.sqrt(currentDeltaZ * currentDeltaZ + currentDeltaX * currentDeltaX);
+            double currentPitch = Math.atan2(currentDeltaY, currentDistance) * (180 / Math.PI);
+            double currentYaw = Math.atan2(currentDeltaX, currentDeltaZ) * (180 / Math.PI);
+
+            double resultantDeltaZ = resultantVector.z;
+            double resultantDeltaY = resultantVector.y;
+            double resultantDeltaX = resultantVector.x;
+
+            double resultantDistance = Math.sqrt(resultantDeltaZ * resultantDeltaZ + resultantDeltaX * resultantDeltaX);
+            double resultantPitch = Math.atan2(resultantDeltaY, resultantDistance) * (180 / Math.PI);
+            double resultantYaw = Math.atan2(resultantDeltaX, resultantDeltaZ) * (180 / Math.PI);
+
+            double targetPitch = 0;
+            double targetYaw;
+
+            //yaw
+            if(crossVector.y < 0) {
+                //+ Math.min(Math.abs(currentYaw - resultantYaw), 6)
+                targetYaw = currentYaw + 6;
+                if(targetYaw > 180) targetYaw -= 360;
+            }
+            else{
+                //- Math.max(Math.abs(currentYaw - resultantYaw), 6)
+                targetYaw = currentYaw - 6;
+                if(targetYaw < -180) targetYaw += 360;
+            }
+
+            //pitch
+            if(resultantPitch > currentPitch){
+                targetPitch = currentPitch + Math.min(resultantPitch - currentPitch, 6);
+            }
+            else if(resultantPitch < currentPitch){
+                targetPitch = currentPitch - Math.max(currentPitch - resultantPitch, 6);
+            }
+
+            Vec3 velocity = getVectorForRotation((float) -targetPitch, (float) targetYaw);
+            this.setDeltaMovement(velocity.normalize().scale(0.8));
+            //TEST
+
+            if(resultantVector.length() <= 3 && !this.level().isClientSide && entityOwner != null){
                 this.level().explode(
                         null,
                         this.getX(),

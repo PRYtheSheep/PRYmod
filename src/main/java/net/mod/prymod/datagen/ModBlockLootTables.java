@@ -66,7 +66,8 @@ public class ModBlockLootTables extends BlockLootSubProvider {
         dropSelf(ModBlock.PRYGENERATOR.get());
         dropSelf(ModBlock.PRYRADAR.get());
         dropOther(ModBlock.PRYPROJECTILE.get(), Items.AIR);
-        dropOther(ModBlock.PRYLAUNCHER.get(), Items.AIR);
+        dropOther(ModBlock.PRYLAUNCHER_0.get(), Items.AIR);
+        dropOther(ModBlock.PRYLAUNCHER_6.get(), Items.AIR);
     }
 
     @Override

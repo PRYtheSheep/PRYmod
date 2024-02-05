@@ -47,6 +47,8 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
     public void render(PRYBlockEntity entity, float partialTick, PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         final BlockRenderDispatcher blockRenderDispatcher = this.context.getBlockRenderDispatcher();
 
+        BlockState state = getBlockState(entity);
+
         LivingEntity target = null;
         AABB startEndBox = new AABB(
                 Minecraft.getInstance().player.getX()-90,
@@ -134,7 +136,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             }
 
             //stack.rotateAround(Axis.YN.rotationDegrees(facing), 0.5F, 0, 0.5F);
-            blockRenderDispatcher.renderSingleBlock(ModBlock.PRYLAUNCHER.get().defaultBlockState(), stack, buffer, packedLight, packedOverlay);
+            blockRenderDispatcher.renderSingleBlock(state, stack, buffer, packedLight, packedOverlay);
             stack.pushPose();
             stack.popPose();
             return;
@@ -162,12 +164,12 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             //rotation needed
             entity.pointingAtTarget = false;
             if(crossVector.y > 0){
-                entity.facing -= 0.1;
+                entity.facing -= 0.2;
                 stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), 0.5F, 0, 0.5F);
                 if(entity.facing < 0) entity.facing = 359;
             }
             else{
-                entity.facing += 0.1;
+                entity.facing += 0.2;
                 stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), 0.5F, 0, 0.5F);
                 if(entity.facing > 360) entity.facing = 1;
             }
@@ -180,7 +182,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), 0.5F, 0, 0.5F);
         }
 
-        blockRenderDispatcher.renderSingleBlock(ModBlock.PRYLAUNCHER.get().defaultBlockState(), stack, buffer, packedLight, packedOverlay);
+        blockRenderDispatcher.renderSingleBlock(state, stack, buffer, packedLight, packedOverlay);
         stack.pushPose();
         stack.popPose();
     }
@@ -195,5 +197,16 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
     
     private float angleBetween2Vectors(Vec3 v1, Vec3 v2) {
         return (float) (Math.acos(v1.dot(v2) / (v1.length() * v2.length())) * (180 / Math.PI));
+    }
+
+    private BlockState getBlockState(PRYBlockEntity entity){
+        int num = entity.numberOfMissiles;
+        if(num == 0) return ModBlock.PRYLAUNCHER_0.get().defaultBlockState();
+        else if(num >= 1 && num <= 10) return ModBlock.PRYLAUNCHER_1.get().defaultBlockState();
+        else if(num >= 11 && num <= 20) return ModBlock.PRYLAUNCHER_2.get().defaultBlockState();
+        else if(num >= 21 && num <= 30) return ModBlock.PRYLAUNCHER_3.get().defaultBlockState();
+        else if(num >= 31 && num <= 40) return ModBlock.PRYLAUNCHER_4.get().defaultBlockState();
+        else if(num >= 41 && num <= 50) return ModBlock.PRYLAUNCHER_5.get().defaultBlockState();
+        else return ModBlock.PRYLAUNCHER_6.get().defaultBlockState();
     }
 }

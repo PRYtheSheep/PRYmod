@@ -11,7 +11,5 @@ public class RGB {
         this.b = b;
     }
 
-    public boolean equals(RGB rgb) {
-        return this.r == rgb.r && this.g == rgb.g && this.b == rgb.b;
-    }
+    public boolean equals(RGB rgb) {return this.r == rgb.r && this.g == rgb.g && this.b == rgb.b;}
 }

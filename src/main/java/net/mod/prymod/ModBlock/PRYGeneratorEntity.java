@@ -6,30 +6,27 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.mod.prymod.utils.DFSutils;
-import org.apache.logging.log4j.core.appender.rolling.action.IfAll;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,8 +47,9 @@ public class PRYGeneratorEntity extends BlockEntity {
     public static final int CAPACITY = 10000;
 
     public static final int INPUT_SLOT = 0;
-    public static final int INPUT_SLOT_COUNT = 1;
-    public static final int SLOT_COUNT = 0;
+    public static final int FLUID_INPUT_SLOT = 1;
+    public static final int INPUT_SLOT_COUNT = 2;
+    public static final int SLOT_COUNT = 2;
     public int burnTime = 0;
 
     private PRYBlockEntity pryBlockEntity = null;
@@ -61,8 +59,15 @@ public class PRYGeneratorEntity extends BlockEntity {
     private final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> new CombinedInvWrapper(inputItems));
     private final LazyOptional<IItemHandler> inputItemHandler = LazyOptional.of(() -> new AdaptedItemHandler(inputItems) {
         @Override
-        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return ItemStack.EMPTY;
+        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {return ItemStack.EMPTY;}
+
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+            return switch(slot){
+                case 0 -> stack.equals(new ItemStack(Items.COAL_BLOCK), false);
+                case 1 -> stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
+                default -> super.isItemValid(slot, stack);
+            };
         }
     });
     private final EnergyStorage energy = createEnergyStorage();
@@ -81,6 +86,25 @@ public class PRYGeneratorEntity extends BlockEntity {
             return false;
         }
     });
+
+    private final FluidTank FLUID_TANK = new FluidTank(1000){
+        @Override
+        protected void onContentsChanged() {
+            setChanged();
+            //Sync to client later stuff
+        }
+
+        @Override
+        public boolean isFluidValid(FluidStack stack) {
+            return stack.getFluid() == Fluids.WATER;
+        }
+    };
+
+    private LazyOptional<IFluidHandler> lazyFluidHandler = LazyOptional.empty();
+
+    public void setFluid(FluidStack stack){this.FLUID_TANK.setFluid(stack);}
+
+    public FluidStack getFluid(){return this.FLUID_TANK.getFluid();}
 
     private final DFSutils utils = new DFSutils() {
         @Override
@@ -106,11 +130,10 @@ public class PRYGeneratorEntity extends BlockEntity {
 
     public void tick(){
         if(this.level.isClientSide) {return;}
-
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
         Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 2, predicate);
         if(player != null){
-            player.displayClientMessage(Component.literal("generator burntime " + burnTime + " energy " + energy.getEnergyStored()), true);
+            player.displayClientMessage(Component.literal("generator burntime " + burnTime + " energy " + energy.getEnergyStored() + " fluid " + FLUID_TANK.getFluidAmount()), true);
         }
 
         BlockPos launcherPos = utils.isConnectedToBlockEntity(this, PRYBlockEntity.class);
@@ -120,9 +143,35 @@ public class PRYGeneratorEntity extends BlockEntity {
         if(radarPos != null) pryRadarEntity = (PRYRadarEntity) this.level.getBlockEntity(radarPos);
         else pryRadarEntity = null;
 
+        if(hasFluidItemInSlot()){
+            transferFluidFromItemIntoTank();
+        }
         generateEnergy();
         distributeEnergy(pryBlockEntity);
         distributeEnergy(pryRadarEntity);
+    }
+
+    private void transferFluidFromItemIntoTank() {
+        this.inputItems.getStackInSlot(FLUID_INPUT_SLOT).getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).ifPresent(handler ->{
+            int drainAmount = Math.min(this.FLUID_TANK.getSpace(), 1000);
+            FluidStack stack = handler.drain(drainAmount, IFluidHandler.FluidAction.SIMULATE);
+            if(this.FLUID_TANK.isFluidValid(stack)){
+                //fluid in tank is valid (water)
+                stack = handler.drain(drainAmount, IFluidHandler.FluidAction.EXECUTE);
+                fillTankWithFluid(stack, handler.getContainer());
+            }
+        });
+    }
+
+    private void fillTankWithFluid(FluidStack stack, ItemStack container) {
+        this.FLUID_TANK.fill(stack, IFluidHandler.FluidAction.EXECUTE);
+        this.inputItems.extractItem(FLUID_INPUT_SLOT, 1, false);
+        this.inputItems.insertItem(FLUID_INPUT_SLOT, container, false);
+    }
+
+    private boolean hasFluidItemInSlot() {
+        ItemStack itemStack = this.inputItems.getStackInSlot(FLUID_INPUT_SLOT);
+        return itemStack.getCount() > 0;
     }
 
     public ItemStackHandler getItems() {
@@ -139,6 +188,7 @@ public class PRYGeneratorEntity extends BlockEntity {
         nbt.put(INPUT_ITEMS_TAG, inputItems.serializeNBT());
         nbt.put(ENERGY_TAG, energy.serializeNBT());
         nbt.putInt(BURNTIMER_TAG, burnTime);
+        nbt = FLUID_TANK.writeToNBT(nbt);
     }
 
     @Override
@@ -151,6 +201,19 @@ public class PRYGeneratorEntity extends BlockEntity {
             energy.deserializeNBT(nbt.get(ENERGY_TAG));
         }
         this.burnTime = nbt.getInt(BURNTIMER_TAG);
+        FLUID_TANK.readFromNBT(nbt);
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        lazyFluidHandler = LazyOptional.of(() -> FLUID_TANK);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        lazyFluidHandler.invalidate();
     }
 
     @Nonnull
@@ -178,9 +241,12 @@ public class PRYGeneratorEntity extends BlockEntity {
             }
         } else if (cap == ForgeCapabilities.ENERGY) {
             return energyHandler.cast();
+        } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
+            return lazyFluidHandler.cast();
         } else {
             return super.getCapability(cap, side);
         }
+        
     }
 
     public void generateEnergy(){
@@ -195,7 +261,7 @@ public class PRYGeneratorEntity extends BlockEntity {
         }
 
         ItemStack itemStack = inputItems.getStackInSlot(INPUT_SLOT);
-        if(!itemStack.isEmpty() && itemStack.is(Items.COAL)){
+        if(!itemStack.isEmpty() && itemStack.is(Items.COAL_BLOCK)){
             int additionalBurnTime = ForgeHooks.getBurnTime(itemStack, RecipeType.SMELTING);
             burnTime += additionalBurnTime;
             inputItems.extractItem(INPUT_SLOT, 1, false);

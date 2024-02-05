@@ -10,19 +10,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.SlotItemHandler;
 import net.mod.prymod.itemMod.client.GUIRegister;
 
-import static net.mod.prymod.ModBlock.PRYGeneratorEntity.INPUT_SLOT;
-import static net.mod.prymod.ModBlock.PRYGeneratorEntity.SLOT_COUNT;
+import static net.mod.prymod.ModBlock.PRYGeneratorEntity.*;
 
 public class PRYGeneratorContainer extends AbstractContainerMenu {
 
     private final BlockPos pos;
     private int power;
+    private String name;
 
     public PRYGeneratorContainer(int windowId, Player player, BlockPos pos) {
         super(GUIRegister.PRYGENERATOR_CONTAINER.get(), windowId);
         this.pos = pos;
         if (player.level().getBlockEntity(pos) instanceof PRYGeneratorEntity generator) {
             addSlot(new SlotItemHandler(generator.getItems(), INPUT_SLOT, 31, 54));
+            addSlot(new SlotItemHandler(generator.getItems(), FLUID_INPUT_SLOT, 31, 10));
             addDataSlot(new DataSlot() {
                 @Override
                 public int get() {
