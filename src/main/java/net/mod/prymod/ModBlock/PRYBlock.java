@@ -121,5 +121,33 @@ public class PRYBlock extends Block implements EntityBlock {
         stateBuilder.add(FACING);
     }
 
-    
+    @Override
+    public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+        return makeShape();
+    }
+
+    public VoxelShape makeShape(){
+        VoxelShape shape = Shapes.empty();
+        shape = Shapes.join(shape, Shapes.box(0.1875, 0.125, 0.0625, 0.8125, 0.1875, 0.9375), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.75, 0.08125, 0.0625, 0.8125, 0.125, 0.125), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.75, 0.0875, 0.13125, 0.80625, 0.125, 0.25), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.6, 0.125, 0.037500000000000006, 0.625, 0.375, 0.10625000000000001), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.3724904557574047, 0.13693284357489002, 0.037500000000000006, 0.3974904557574047, 0.38693284357489, 0.10625), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.3912404557574044, 0.36818284357488984, 0.037500000000000006, 0.6412404557574042, 0.39318284357488986, 0.10625), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.7499999999999999, 0, 0.2749999999999999, 0.79375, 0.31875, 0.31875), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.7000000000000001, 0.26874999999999993, 0.9312499999999997, 0.7562500000000001, 0.28749999999999987, 0.9874999999999993), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.25000000000000006, 0, 0.9374999999999998, 0.29375000000000007, 0.31875, 0.9812499999999993), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.2437500000000001, 0.22499999999999998, 0.9312499999999997, 0.30000000000000004, 0.24374999999999997, 0.9874999999999993), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.2437500000000001, 0.26874999999999993, 0.9312499999999997, 0.30000000000000004, 0.28749999999999987, 0.9874999999999993), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.7000000000000001, 0.22499999999999998, 0.9312499999999997, 0.7562500000000001, 0.24374999999999997, 0.9874999999999993), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.70625, 0, 0.9374999999999998, 0.7500000000000001, 0.31875, 0.9812499999999993), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.7437499999999999, 0.22499999999999998, 0.26874999999999993, 0.7999999999999999, 0.24374999999999997, 0.32499999999999996), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.7437499999999999, 0.26874999999999993, 0.26874999999999993, 0.7999999999999999, 0.28749999999999987, 0.32499999999999996), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.2062499999999999, 0.22499999999999998, 0.26874999999999993, 0.26250000000000007, 0.24374999999999997, 0.32499999999999996), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.21249999999999988, 0, 0.2749999999999999, 0.25625, 0.31875, 0.31875), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.2062499999999999, 0.26874999999999993, 0.26874999999999993, 0.26250000000000007, 0.28749999999999987, 0.32499999999999996), BooleanOp.OR);
+
+        return shape;
+    }
+
 }
