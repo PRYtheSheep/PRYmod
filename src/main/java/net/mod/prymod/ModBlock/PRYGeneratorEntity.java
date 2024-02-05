@@ -129,13 +129,18 @@ public class PRYGeneratorEntity extends BlockEntity {
     };
 
     public void tick(){
+        //Sanity check
         if(this.level.isClientSide) {return;}
+
+        //Get the closest player to display message
+        //Should move to the GUI instead
         Predicate<Entity> predicate = (i) -> (i instanceof Player);
         Player player = this.level.getNearestPlayer(this.getBlockPos().getX(), this.getBlockPos().getY(), this.getBlockPos().getZ(), 2, predicate);
         if(player != null){
             player.displayClientMessage(Component.literal("generator burntime " + burnTime + " energy " + energy.getEnergyStored() + " fluid " + FLUID_TANK.getFluidAmount()), true);
         }
 
+        //Get 1 radar and 1 launcher that is connected to this generator
         BlockPos launcherPos = utils.isConnectedToBlockEntity(this, PRYBlockEntity.class);
         if(launcherPos != null) pryBlockEntity = (PRYBlockEntity) this.level.getBlockEntity(launcherPos);
         else pryBlockEntity = null;
@@ -143,9 +148,12 @@ public class PRYGeneratorEntity extends BlockEntity {
         if(radarPos != null) pryRadarEntity = (PRYRadarEntity) this.level.getBlockEntity(radarPos);
         else pryRadarEntity = null;
 
+        //Self explainatory
         if(hasFluidItemInSlot()){
             transferFluidFromItemIntoTank();
         }
+
+        //Launcher stuff
         generateEnergy();
         distributeEnergy(pryBlockEntity);
         distributeEnergy(pryRadarEntity);
