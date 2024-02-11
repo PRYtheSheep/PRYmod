@@ -36,7 +36,7 @@ public class PRYBlock extends Block implements EntityBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 8, 16);
+    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 32, 8, 32);
     public PRYBlock(Properties properties) {
         super(properties);
     }
@@ -124,7 +124,7 @@ public class PRYBlock extends Block implements EntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        return makeShape();
+        return SHAPE;
     }
 
     public VoxelShape makeShape(){

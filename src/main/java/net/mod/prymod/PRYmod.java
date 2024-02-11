@@ -127,6 +127,8 @@ public class PRYmod
             event.accept(ModBlock.CABLETCROSS1LAUNCHER);
             event.accept(ModBlock.CABLETCROSS2LAUNCHER);
             event.accept(ModBlock.CABLETCROSS3LAUNCHER);
+
+            event.accept(ModBlock.TESTBLOCK);
         }
     }
 

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "part=low": {
+      "model": "prymod:block/testblock_low"
+    }
+  }
+}
