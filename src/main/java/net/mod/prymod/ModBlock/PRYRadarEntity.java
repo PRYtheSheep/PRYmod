@@ -226,7 +226,7 @@ public class PRYRadarEntity extends BlockEntity {
         if(radarTarget == null){
             List<Entity> list1 = this.level.getEntities(null, startEndBox);
             for(Entity entity : list1){
-                if(entity instanceof Bat && ((Bat) entity).getHealth() != 0){
+                if(entity instanceof Player && ((Player) entity).getHealth() != 0){
                     radarTarget = (LivingEntity) entity;
                     livingEntityRGBHashMap.put(radarTarget, new RGB(1, 1, 0));
                     break;

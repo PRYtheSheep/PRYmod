@@ -1,11 +1,13 @@
 package net.mod.prymod.Renderer;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.sun.jna.platform.win32.OaIdl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -48,7 +50,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
         final BlockRenderDispatcher blockRenderDispatcher = this.context.getBlockRenderDispatcher();
 
         BlockState state = getBlockState(entity);
-
+        int test_z = 0;
         LivingEntity target = null;
         AABB startEndBox = new AABB(
                 Minecraft.getInstance().player.getX()-90,
@@ -68,7 +70,6 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
 
         Vec3 targetPos = null;
 
-        stack.translate(0, 0, 0);
         if(entity.facing == -1){
             switch(entity.getBlockState().getValue(PRYBlock.FACING)){
                 case NORTH -> {
@@ -142,7 +143,7 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             return;
         }
 
-        Vec3 currentPos = entity.getBlockPos().getCenter();
+        Vec3 currentPos = entity.getBlockPos().getCenter().add(new Vec3(-1, 0, 1));
         Vec3 resultantVector = new Vec3(targetPos.x - currentPos.x,
                 targetPos.y - currentPos.y,
                 targetPos.z - currentPos.z);
@@ -165,12 +166,16 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             entity.pointingAtTarget = false;
             if(crossVector.y > 0){
                 entity.facing -= 0.2;
-                stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), 0.5F, 0, 0.5F);
+                //coordinate for stack.rotateAround = translate coordinate + 0.5
+                stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), -0.5F, 0, 1.5F);
+                stack.translate(-1, 0, 1);
                 if(entity.facing < 0) entity.facing = 359;
             }
             else{
                 entity.facing += 0.2;
-                stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), 0.5F, 0, 0.5F);
+                //coordinate for stack.rotateAround = translate coordinate + 0.5
+                stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), -0.5F, 0, 1.5F);
+                stack.translate(-1, 0, 1);
                 if(entity.facing > 360) entity.facing = 1;
             }
             ModMessages.sendToServer(new PRYBlockRendererC2SPacket(entity.facing, entity.getBlockPos(), false));
@@ -179,7 +184,10 @@ public class PRYBlockEntityRenderer implements BlockEntityRenderer<PRYBlockEntit
             entity.pointingAtTarget = true;
             entity.facing = angle;
             ModMessages.sendToServer(new PRYBlockRendererC2SPacket(entity.facing, entity.getBlockPos(), true));
-            stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), 0.5F, 0, 0.5F);
+            //coordinate for stack.rotateAround = translate coordinate + 0.5
+            stack.rotateAround(Axis.YN.rotationDegrees(entity.facing), -0.5F, 0, 1.5F);
+            stack.rotateAround(Axis.ZN.rotationDegrees(entity.facing), -0.5F, 0, 1.5F);
+            stack.translate(-1, 0, 1);
         }
 
         blockRenderDispatcher.renderSingleBlock(state, stack, buffer, packedLight, packedOverlay);

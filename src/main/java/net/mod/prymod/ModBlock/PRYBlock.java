@@ -36,7 +36,7 @@ public class PRYBlock extends Block implements EntityBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 32, 8, 32);
+    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 8, 16);
     public PRYBlock(Properties properties) {
         super(properties);
     }

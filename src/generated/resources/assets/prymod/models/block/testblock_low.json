@@ -1,5 +1,46 @@
 {
-	"loader": "forge:obj",
-	"model": "prymod:models/block/testblock_low.obj",
-	"flip-v": false
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "prymod:block/testblock_low",
+		"particle": "block/texture"
+	},
+	"elements": [
+		{
+			"from": [-4, 0, 2],
+			"to": [-2, 17, 4],
+			"faces": {
+				"north": {"uv": [0, 0, 1, 8.5], "texture": "#0"},
+				"east": {"uv": [1, 0, 2, 8.5], "texture": "#0"},
+				"south": {"uv": [2, 0, 3, 8.5], "texture": "#0"},
+				"west": {"uv": [3, 0, 4, 8.5], "texture": "#0"},
+				"up": {"uv": [9, 7, 8, 6], "texture": "#0"},
+				"down": {"uv": [9, 7, 8, 8], "texture": "#0"}
+			}
+		},
+		{
+			"from": [-2, 17, 0],
+			"to": [12, 19, 2],
+			"faces": {
+				"north": {"uv": [4, 0, 11, 1], "texture": "#0"},
+				"east": {"uv": [8, 8, 9, 9], "texture": "#0"},
+				"south": {"uv": [4, 1, 11, 2], "texture": "#0"},
+				"west": {"uv": [0, 8.5, 1, 9.5], "texture": "#0"},
+				"up": {"uv": [11, 3, 4, 2], "texture": "#0"},
+				"down": {"uv": [11, 3, 4, 4], "texture": "#0"}
+			}
+		},
+		{
+			"from": [10, 17, 2],
+			"to": [12, 28, 4],
+			"faces": {
+				"north": {"uv": [4, 4, 5, 9.5], "texture": "#0"},
+				"east": {"uv": [5, 4, 6, 9.5], "texture": "#0"},
+				"south": {"uv": [6, 4, 7, 9.5], "texture": "#0"},
+				"west": {"uv": [7, 4, 8, 9.5], "texture": "#0"},
+				"up": {"uv": [9, 5, 8, 4], "texture": "#0"},
+				"down": {"uv": [9, 5, 8, 6], "texture": "#0"}
+			}
+		}
+	]
 }
